@@ -1,40 +1,46 @@
-version: "3"
 services:
   api:
-    container_name: api
     build:
       context: ./backend
-      dockerfile: server/Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
     volumes:
       - ./backend:/app
-    env_file:
-      - ./backend/config/.env.local
     environment:
-      PORT: 8080
-      FRONT_ENDPOINT: http://localhost:3000
-    ports:
-      - 8080:8080
+      - GO_ENV=development
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=mysql
+      - DB_NAME=db
+      - DB_PORT=3306
     networks:
-      - backend
+      - app-network
     depends_on:
-      - phpmyadmin
       - mysql
 
   frontend:
     build:
-      context: ./frontend/
+      context: ./frontend
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
     volumes:
       - ./frontend:/app
-    ports:
-      - 3000:3000
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+    depends_on:
+      - api
 
   swagger-ui:
     image: swaggerapi/swagger-ui:latest
     environment:
       SWAGGER_JSON: /api/api-document.yaml
     volumes:
-      - ./api-document.yaml:/api/api-document.yaml:ro
+      - ./docs/api-document.yaml:/api/api-document.yaml:ro
     ports:
       - "127.0.0.1:8081:8080"
 
@@ -49,16 +55,26 @@ services:
       TZ: "Asia/Tokyo"
     volumes:
       - db-data:/var/lib/mysql
+    networks:
+      - app-network
 
   phpmyadmin:
     image: phpmyadmin
-    depends_on:
-      - mysql
-    environment:
-      - PMA_HOSTS=mysql
     ports:
       - "3001:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=mysql
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+
 volumes:
   db-data:
-# networks:
-#   backend:
+  node_modules:
+
+networks:
+  app-network:
+    driver: bridge
