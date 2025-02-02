@@ -3,8 +3,10 @@ module kininaru_clip/backend
 go 1.21.5
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/oklog/ulid/v2 v2.1.0
 	go.opentelemetry.io/otel/trace v1.24.0
 	go.uber.org/zap v1.27.0
 	gorm.io/driver/mysql v1.5.7

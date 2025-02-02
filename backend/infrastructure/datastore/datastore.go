@@ -2,6 +2,8 @@ package datastore
 
 import (
 	"context"
+
+	"kininaru_clip/backend/domain/repository"
 )
 
 type Data interface {
@@ -9,4 +11,6 @@ type Data interface {
 
 	ReadWriteTransaction(ctx context.Context, f func(context.Context, ReadWriteStore) error) error
 }
-type ReadWriteStore interface{}
+type ReadWriteStore interface {
+	Event() repository.Event
+}
