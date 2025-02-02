@@ -1,0 +1,64 @@
+version: "3"
+services:
+  api:
+    container_name: api
+    build:
+      context: ./backend
+      dockerfile: server/Dockerfile
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/config/.env.local
+    environment:
+      PORT: 8080
+      FRONT_ENDPOINT: http://localhost:3000
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+    depends_on:
+      - phpmyadmin
+      - mysql
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 3000:3000
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    environment:
+      SWAGGER_JSON: /api/api-document.yaml
+    volumes:
+      - ./api-document.yaml:/api/api-document.yaml:ro
+    ports:
+      - "127.0.0.1:8081:8080"
+
+  mysql:
+    image: mysql:8.0.27
+    platform: linux/amd64
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: db
+      TZ: "Asia/Tokyo"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      - PMA_HOSTS=mysql
+    ports:
+      - "3001:80"
+volumes:
+  db-data:
+# networks:
+#   backend:
