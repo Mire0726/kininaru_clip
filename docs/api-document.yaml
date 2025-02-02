@@ -17,21 +17,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Event"
+              $ref: "#/components/schemas/createEventInput"
       responses:
         "200":
           description: "Event created"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
+                $ref: "#/components/schemas/createEventResponse"
 
 components:
   schemas:
-    Event:
+    createEventInput:
       type: "object"
       properties:
-        name:
+        title:
+          type: "string"
+        url:
           type: "string"
       required:
-        - "name"
+        - "title"
+    createEventResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        title:
+          type: "string"
+        url:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
