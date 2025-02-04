@@ -54,6 +54,7 @@ services:
       MYSQL_DATABASE: db
       TZ: "Asia/Tokyo"
     volumes:
+      - ./mysql/mysql_init:/docker-entrypoint-initdb.d
       - db-data:/var/lib/mysql
     networks:
       - app-network
