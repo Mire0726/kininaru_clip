@@ -21,7 +21,6 @@ type DBConfig struct {
     Loc       string
 }
 
-// LoadDBConfig は環境変数からデータベース設定を読み込みます
 func LoadDBConfig() (*DBConfig, error) {
     if err := godotenv.Load("./api/config/.env"); err != nil {
         return nil, fmt.Errorf("Error loading .env file: %v", err)
@@ -39,7 +38,6 @@ func LoadDBConfig() (*DBConfig, error) {
     }, nil
 }
 
-// NewDB はGORMを使用してデータベース接続を初期化します
 func NewDB(cfg *DBConfig) (*gorm.DB, error) {
     dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
         cfg.User,
@@ -57,13 +55,11 @@ func NewDB(cfg *DBConfig) (*gorm.DB, error) {
         return nil, fmt.Errorf("failed to connect database: %w", err)
     }
 
-    // SQLDBインスタンスを取得
     sqlDB, err := db.DB()
     if err != nil {
         return nil, fmt.Errorf("failed to get sql.DB instance: %w", err)
     }
 
-    // コネクションプールの設定
     sqlDB.SetMaxIdleConns(10)
     sqlDB.SetMaxOpenConns(100)
 
