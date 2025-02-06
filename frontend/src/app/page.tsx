@@ -1,95 +1,37 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Box, Button, Text, Flex } from "@chakra-ui/react";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <Flex
+      direction="column"
+      align="center"
+      justify="center"
+      bg="linear-gradient(to bottom, #87CEFA, #00BFFF)"
+      h="100vh"
+      textAlign="center"
+    >
+      <Box mb={6}>
+        <Text fontSize="6xl" fontWeight="bold" color="white">
+          キニナルクリップ
+        </Text>
+      </Box>
+      <Box mb={4}>
+        <Text fontSize="xl" color="white">
+          行きたい場所・飲食店・ホテル
+          <br />
+          あなたの“気になる”を共有しよう。
+        </Text>
+      </Box>
+      <Box mb={8}>
+        <Text fontSize="md" color="white">
+          キニナルクリップは、行きたい場所や気になっている場所を
+          <br />
+          まとめて他のユーザーに共有できるサービスです。
+        </Text>
+      </Box>
+      <Button colorScheme="blackAlpha" size="lg">
+        はじめる
+      </Button>
+    </Flex>
   );
 }
