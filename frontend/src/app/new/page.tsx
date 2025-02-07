@@ -11,11 +11,38 @@ import {
   Stack,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import { usePostEvent } from "./usePostEvent"; // カスタムフックをインポート
 import Header from "../../components/header";
+
 export default function NewGroup() {
   const fontSize = useBreakpointValue({ base: "3xl", md: "4xl" });
   const inputSize = useBreakpointValue({ base: "md", md: "lg" });
   const buttonSize = useBreakpointValue({ base: "md", md: "lg" });
+
+  const [title, setTitle] = useState("");
+  const [memberName, setMemberName] = useState("");
+  const { mutate: createEvent } = usePostEvent();
+
+  const handleCreateEvent = () => {
+    if (!title || !memberName) {
+      alert("タイトルとメンバー名を入力してください");
+      return;
+    }
+
+    createEvent({
+      id: crypto.randomUUID(),
+      title,
+      url: "",
+      user_request: [
+        {
+          id: crypto.randomUUID(),
+          name: memberName,
+          event_id: "",
+        },
+      ],
+    });
+  };
 
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
@@ -28,12 +55,24 @@ export default function NewGroup() {
         <Stack spacing={4} w="full" maxW="500px">
           <FormControl>
             <FormLabel fontSize="lg">タイトル</FormLabel>
-            <Input placeholder="九州旅行" size={inputSize} bg="white" />
+            <Input
+              placeholder="九州旅行"
+              size={inputSize}
+              bg="white"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel fontSize="lg">メンバー名</FormLabel>
-            <Input placeholder="すみれ" size={inputSize} bg="white" />
+            <Input
+              placeholder="すみれ"
+              size={inputSize}
+              bg="white"
+              value={memberName}
+              onChange={(e) => setMemberName(e.target.value)}
+            />
           </FormControl>
 
           <Button
@@ -44,6 +83,7 @@ export default function NewGroup() {
             border="1px solid #DADADA"
             boxShadow="md"
             _hover={{ bg: "#f0f0f0" }}
+            onClick={handleCreateEvent}
           >
             作成
           </Button>
