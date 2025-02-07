@@ -1,24 +1,20 @@
 FROM node:18-alpine
 
-# 作業ディレクトリを設定
 WORKDIR /app
 
-# キャッシュ利用で効率化するために別でコピー
+# パッケージマネージャーの設定ファイルをコピー
 COPY package.json package-lock.json ./
+COPY pnpm-lock.yaml ./
+
+# pnpmのインストールと依存関係のインストール
+RUN npm install -g pnpm
+RUN pnpm install
 
 # ソースコードをコピー
 COPY . .
 
-# 依存関係をインストール
-RUN npm install
-
-# アプリケーションをビルド
-RUN npm run build
-
-RUN npm install -g pnpm
-
-# ポート番号を指定
+# 開発サーバーのポートを公開
 EXPOSE 3000
 
-# アプリケーションを起動
-CMD ["pnpm","run","dev"]
+# 開発サーバーを起動
+CMD ["pnpm", "run", "dev"]
