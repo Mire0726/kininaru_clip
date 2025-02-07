@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
+import AddKinaruModal from "./modal";
 import Header from "../../../components/header";
 
 const categories = [
@@ -21,6 +22,7 @@ const categories = [
 ];
 
 export default function IdeaList({ params }: { params: { id: string } }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
       <Header />
@@ -38,10 +40,14 @@ export default function IdeaList({ params }: { params: { id: string } }) {
           py={4}
           borderRadius="md"
           _hover={{ bg: "gray.100" }}
+          onClick={() => setIsModalOpen(true)}
         >
           気になるを追加
         </Button>
-
+        <AddKinaruModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
         <VStack spacing={4} mt={6} w="full" maxW="800px">
           {categories.map(({ label, icon }) => (
             <Flex
