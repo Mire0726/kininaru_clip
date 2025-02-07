@@ -19,9 +19,7 @@ export default function NewGroup() {
 
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
-      {/* ヘッダー */}
       <Header />
-      {/* メインコンテンツ */}
       <Flex direction="column" align="center" mt={10} px={4}>
         <Text fontSize={fontSize} fontWeight="bold" color="#46B2FF" mb={6}>
           グループ作成
