@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS events (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     url VARCHAR(2083),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -7,21 +7,21 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 CREATE TABLE IF NOT EXISTS users (
-    id VARCHAR(255) PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    event_id INT,
+    event_id CHAR(36),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (event_id) REFERENCES events(id)
 );
 
 CREATE TABLE IF NOT EXISTS ideas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     url VARCHAR(2083),
-    created_by VARCHAR(255) NOT NULL,
+    created_by CHAR(36) NOT NULL,
     tag VARCHAR(100),
-    event_id INT,
+    event_id CHAR(36),
     likes INT DEFAULT 0,
     summary TEXT,
     memo TEXT,
