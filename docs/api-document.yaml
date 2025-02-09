@@ -26,17 +26,165 @@ paths:
               schema:
                 $ref: "#/components/schemas/createEventResponse"
 
+  /events/{eventId}/ideas:
+    post:
+      tags:
+        - "ideas"
+      summary: "Create a new idea"
+      operationId: "createIdea"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ideaRequest"
+      responses:
+        "200":
+          description: "Idea created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+    get:
+      tags:
+        - "ideas"
+      summary: "Get ideas categorized by tag"
+      operationId: "getIdeaList"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get a list of idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/categorizedIdeaResponse"
+
+  /events/{eventId}/users:
+    post:
+      tags:
+        - "users"
+      summary: "Create a list of users"
+      operationId: "createUser"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/userList"
+      responses:
+        "200":
+          description: "List of User created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userList"
+    get:
+      tags:
+        - "users"
+      summary: "Get a list of users"
+      operationId: "getUsers"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get list of user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userList"
+
+  /events/{eventId}/ideas/{ideaId}:
+    get:
+      tags:
+        - "ideas"
+      summary: "Get an idea by event id"
+      operationId: "getIdea"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get an idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+
+  /events/{eventId}/ideas/{ideaId}/likes:
+    put:
+      tags:
+        - "ideas"
+      summary: "Update idea's likes"
+      operationId: "updateLikes"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get an idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+
 components:
   schemas:
     createEventInput:
       type: "object"
       properties:
+        id:
+          type: "string"
         title:
           type: "string"
         url:
           type: "string"
+        users:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/user"
       required:
+        - "id"
         - "title"
+        - "url"
+        - "users"
+
     createEventResponse:
       type: "object"
       properties:
@@ -46,9 +194,92 @@ components:
           type: "string"
         url:
           type: "string"
-        createdAt:
+
+    ideaRequest:
+      type: "object"
+      properties:
+        id:
           type: "string"
-          format: "date-time"
-        updatedAt:
+        title:
           type: "string"
-          format: "date-time"
+        url:
+          type: "string"
+        createdBy:
+          type: "string"
+        tag:
+          type: "string"
+        memo:
+          type: "string"
+      required:
+        - "id"
+        - "title"
+        - "url"
+        - "createdBy"
+        - "tag"
+
+    ideaResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        title:
+          type: "string"
+        url:
+          type: "string"
+        createdBy:
+          type: "string"
+        tag:
+          type: "string"
+        memo:
+          type: "string"
+        eventId:
+          type: "string"
+        likes:
+          type: "integer"
+          format: "int32"
+        summary:
+          type: "string"
+
+    categorizedIdeaResponse:
+      type: "object"
+      properties:
+        location:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+        restaurant:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+        hotel:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+        other:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+
+    user:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        eventId:
+          type: "string"
+      required:
+        - "id"
+        - "name"
+        - "eventId"
+
+    userList:
+      type: "object"
+      properties:
+        users:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/user"
+      required:
+        - "users"
