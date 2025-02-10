@@ -28,11 +28,7 @@ func Serve(addr string) {
 		AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
 	}))
 
-	dbCfg, err := infrastructure.LoadDBConfig()
-	if err != nil {
-		logger.Error("Failed to load db config", log.Ferror(err))
-	}
-	db, err := infrastructure.NewDB(dbCfg)
+	db, err := infrastructure.NewDB()
 	if err != nil {
 		logger.Error("Failed to connect db", log.Ferror(err))
 	}
@@ -44,7 +40,7 @@ func Serve(addr string) {
 		return c.String(http.StatusOK, "Welcome to unibox")
 	})
 	fmt.Println("before e.POST")
-	e.POST("/events/{event_id}/users", handlerCmd.CreateUser)
+	e.POST("/events/:event_id/users", handlerCmd.CreateUser)
 
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
