@@ -26,6 +26,40 @@ paths:
               schema:
                 $ref: "#/components/schemas/createEventResponse"
 
+  /events/{event_id}/users:
+    post:
+      summary: "Create Users"
+      description: "指定したイベントに複数のユーザーを登録する"
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: "Users created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+
 components:
   schemas:
     createEventInput:
@@ -52,3 +86,16 @@ components:
         updatedAt:
           type: "string"
           format: "date-time"
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        eventId:
+          type: string
+      required:
+        - id
+        - name
+        - eventId
