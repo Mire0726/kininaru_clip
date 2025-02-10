@@ -2,7 +2,8 @@ package datastoresql
 
 import (
 	"context"
-	"log"
+
+	"kininaru_clip/backend/pkg/log"
 
 	"kininaru_clip/backend/domain/repository"
 	"kininaru_clip/backend/infrastructure/datastore"
@@ -58,13 +59,13 @@ func (s *Store) ReadWriteTransaction(ctx context.Context, f func(context.Context
 	}
 
 	if err := f(ctx, rw); err != nil {
-		s.logger.Printf("failed to execute transaction: %v", err)
+		s.logger.Logger.Error("failed to execute transaction", log.Ferror(err))
 		tx.Rollback()
 		return err
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		s.logger.Printf("failed to commit transaction: %v", err)
+		s.logger.Logger.Error("failed to commit transaction", log.Ferror(err))
 		return err
 	}
 

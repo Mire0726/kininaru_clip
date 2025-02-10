@@ -2,7 +2,7 @@ package event
 
 import (
 	"context"
-	"log"
+	"kiniaru_clip/backend/pkg/log"
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/domain/repository"

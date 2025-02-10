@@ -43,10 +43,14 @@ paths:
             schema:
               type: object
               properties:
-                users:
+                names:
                   type: array
                   items:
-                    $ref: '#/components/schemas/User'
+                    type: string
+                  description: "作成するユーザーの名前配列"
+                  example: ["田中太郎", "山田花子"]
+              required:
+                - names
       responses:
         "200":
           description: "Users created successfully"
@@ -58,7 +62,7 @@ paths:
                   users:
                     type: array
                     items:
-                      $ref: '#/components/schemas/User'
+                      $ref: "#/components/schemas/User"
 
 components:
   schemas:
