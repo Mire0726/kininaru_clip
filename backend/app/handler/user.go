@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"kininaru_clip/backend/domain/model"
@@ -10,6 +11,7 @@ import (
 )
 
 func (h *Handler) CreateUser(c echo.Context) error {
+	fmt.Println("before CreateUser")
 	ctx := c.Request().Context()
 	req := []model.CreateUserInput{}
 	id := c.Param("event_id")

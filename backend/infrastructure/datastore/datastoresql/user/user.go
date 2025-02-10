@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"kiniaru_clip/backend/pkg/log"
+	"kininaru_clip/backend/pkg/log"
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/domain/repository"
@@ -25,7 +25,7 @@ func NewUser(db *gorm.DB, logger *log.Logger) repository.User {
 func (r *user) BulkCreate(ctx context.Context, users []*model.User) error {
 	result := r.db.WithContext(ctx).Create(&users)
 	if result.Error != nil {
-		r.logger.Printf("failed to create event: %v", result.Error)
+		r.logger.Logger.Error("failed to create event", log.Ferror(result.Error))
 		return result.Error
 	}
 	return nil
