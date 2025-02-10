@@ -14,7 +14,7 @@ func (h *Handler) CreateUser(c echo.Context) error {
 	fmt.Println("before CreateUser")
 	ctx := c.Request().Context()
 	req := []model.CreateUserInput{}
-	id := c.Param("event_id")
+	id := c.Param("eventId")
 
 	if err := c.Bind(&req); err != nil {
 		return err
@@ -28,5 +28,5 @@ func (h *Handler) CreateUser(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, res)
+	return c.JSON(http.StatusOK, res)
 }
