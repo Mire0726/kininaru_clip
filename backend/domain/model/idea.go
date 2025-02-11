@@ -19,3 +19,10 @@ type CreateIdeaInput struct {
 	Tag       string
 	EventID   string
 }
+
+type GetIdeasReponse struct {
+	Location    []*Idea
+	Resutaurant []*Idea
+	Hotel       []*Idea
+	Other       []*Idea
+}

@@ -40,6 +40,7 @@ func Serve(addr string) {
 	})
 	e.POST("/events/:eventId/users", handlerCmd.CreateUser)
 	e.POST("/events/:eventId/ideas", handlerCmd.CreateIdea)
+	e.GET("/events/:eventId/ideas", handlerCmd.GetIdeas)
 
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
