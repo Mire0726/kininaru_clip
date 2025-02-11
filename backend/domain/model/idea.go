@@ -1,18 +1,18 @@
 package model
 
 type Idea struct {
-	ID        string
-	Title     string
-	Url       string
-	CreatedBy string
-	Tag       IdeaTag
-	EventID   string
-	Likes     int32
-	Summary   *string
-	Memo      *string
+	ID        string  `json:"id"`
+	Title     string  `json:"title"`
+	Url       string  `json:"url"`
+	CreatedBy string  `json:"created_by"`
+	Tag       string  `json:"tag"`
+	EventID   string  `json:"event_id"`
+	Likes     int32   `json:"likes"`
+	Summary   *string `json:"summary,omitempty"`
+	Memo      *string `json:"memo,omitempty"`
 }
 
-type  IdeaTag string
+type IdeaTag string
 
 const (
 	Location   IdeaTag = "location"
@@ -22,16 +22,16 @@ const (
 )
 
 type CreateIdeaInput struct {
-	Title     string
-	Url       string
-	CreatedBy string
-	Tag       IdeaTag
-	EventID   string
+	Title     string `json:"title"`
+	Url       string `json:"url"`
+	CreatedBy string `json:"created_by"`
+	Tag       string `json:"tag"`
+	EventID   string `json:"event_id"`
 }
 
 type GetIdeasReponse struct {
-	Location   []*Idea
-	Restaurant []*Idea
-	Hotel      []*Idea
-	Other      []*Idea
+	Location   []*Idea `json:"location"`
+	Restaurant []*Idea `json:"restaurant"`
+	Hotel      []*Idea `json:"hotel"`
+	Other      []*Idea `json:"other"`
 }
