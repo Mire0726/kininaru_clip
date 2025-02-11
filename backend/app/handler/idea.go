@@ -29,3 +29,18 @@ func (h *Handler) CreateIdea(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, res)
 }
+
+func (h *Handler) GetIdeas(c echo.Context) error {
+	fmt.Println("before get ideas")
+	ctx := c.Request().Context()
+	id := c.Param("eventId")
+
+	res, err := h.ideaUC.GetIdeas(ctx, id)
+	if err != nil {
+		log.Error("failed to get ideas")
+
+		return err
+	}
+
+	return c.JSON(http.StatusOK, res)
+}
