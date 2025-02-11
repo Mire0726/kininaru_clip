@@ -116,6 +116,26 @@ paths:
                     description: "作成されたユーザー情報の配列"
                     items:
                       $ref: "#/components/schemas/user"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "エラーメッセージ"
+        "409":
+          description: "既にユーザーが存在しています"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "エラーメッセージ"
     get:
       tags:
         - "users"
