@@ -11,6 +11,8 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
+import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
+import { useFetchUsers } from "@/hooks/useFetchUsers";
 import AddKinaruModal from "./modal";
 import Header from "../../../components/header";
 
@@ -23,6 +25,13 @@ const categories = [
 
 export default function IdeaList({ params }: { params: { id: string } }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data, isLoading } = useFetchIdeas(params.id);
+  const { data: users } = useFetchUsers(params.id);
+  const hotelIdeas = data?.hotel || [];
+  const locationIdeas = data?.location || [];
+  const restaurantIdeas = data?.restaurant || [];
+  const otherIdeas = data?.other || [];
+
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
       <Header />
@@ -31,7 +40,7 @@ export default function IdeaList({ params }: { params: { id: string } }) {
           沖縄旅行
         </Text>
         <Text fontSize="sm" color="gray.500" mb={6}>
-          こしたろう・こしむ
+          {users?.users.map((user) => user.name).join("・")}
         </Text>
         <Button
           bg="white"

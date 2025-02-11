@@ -4,15 +4,11 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8080";
 
 interface UserRequest {
-  id: string;
   name: string;
-  event_id: string;
 }
 
 interface EventRequest {
-  id: string;
   title: string;
-  url: string;
   user_request: UserRequest[];
 }
 

@@ -12,7 +12,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { usePostEvent } from "./usePostEvent"; // カスタムフックをインポート
+import { usePostEvent } from "../../hooks/usePostEvent"; 
 import Header from "../../components/header";
 
 export default function NewGroup() {
@@ -31,14 +31,10 @@ export default function NewGroup() {
     }
 
     createEvent({
-      id: crypto.randomUUID(),
       title,
-      url: "",
       user_request: [
         {
-          id: crypto.randomUUID(),
           name: memberName,
-          event_id: "",
         },
       ],
     });
