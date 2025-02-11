@@ -2,11 +2,14 @@ package datastoresql
 
 import (
 	"context"
-	"log"
+
+	"kininaru_clip/backend/pkg/log"
 
 	"kininaru_clip/backend/domain/repository"
 	"kininaru_clip/backend/infrastructure/datastore"
 	"kininaru_clip/backend/infrastructure/datastore/datastoresql/event"
+	"kininaru_clip/backend/infrastructure/datastore/datastoresql/idea"
+	"kininaru_clip/backend/infrastructure/datastore/datastoresql/user"
 
 	"gorm.io/gorm"
 )
@@ -57,13 +60,13 @@ func (s *Store) ReadWriteTransaction(ctx context.Context, f func(context.Context
 	}
 
 	if err := f(ctx, rw); err != nil {
-		s.logger.Printf("failed to execute transaction: %v", err)
+		s.logger.Logger.Error("failed to execute transaction", log.Ferror(err))
 		tx.Rollback()
 		return err
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		s.logger.Printf("failed to commit transaction: %v", err)
+		s.logger.Logger.Error("failed to commit transaction", log.Ferror(err))
 		return err
 	}
 
@@ -86,4 +89,20 @@ func (s *nonTransactionalReadWriteStore) Event() repository.Event {
 
 func (s *transactionalReadWriteStore) Event() repository.Event {
 	return event.NewEvent(s.tx, s.logger)
+}
+
+func (s *nonTransactionalReadWriteStore) User() repository.User {
+	return user.NewUser(s.db, s.logger)
+}
+
+func (s *transactionalReadWriteStore) User() repository.User {
+	return user.NewUser(s.tx, s.logger)
+}
+
+func (s *nonTransactionalReadWriteStore) Idea() repository.Idea {
+	return idea.NewIdea(s.db, s.logger)
+}
+
+func (s *transactionalReadWriteStore) Idea() repository.Idea {
+	return idea.NewIdea(s.tx, s.logger)
 }

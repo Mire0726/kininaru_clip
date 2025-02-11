@@ -10,11 +10,6 @@ import (
 )
 
 func main() {
-	// db, err := mysql.ConnectToDB()
-	// if err != nil {
-	// 	log.Fatal("Could not initialize database:", err)
-	// }
-
 	defaultPort := "8080"
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -26,8 +21,4 @@ func main() {
 	addr := fmt.Sprintf(":%s", port)
 	log.Printf("Listening on %s...\n", addr)
 	server.Serve(addr)
-
-	// if db == nil {
-	// 	log.Fatal("Database connection is nil in main")
-	// }
 }
