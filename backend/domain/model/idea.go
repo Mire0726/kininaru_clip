@@ -30,8 +30,8 @@ type CreateIdeaInput struct {
 }
 
 type GetIdeasReponse struct {
-	Location   []*Idea
-	Restaurant []*Idea
-	Hotel      []*Idea
-	Other      []*Idea
+	Location   []*Idea `json:"location"`
+	Restaurant []*Idea `json:"restaurant"`
+	Hotel      []*Idea `json:"hotel"`
+	Other      []*Idea `json:"other"`
 }
