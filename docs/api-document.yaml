@@ -244,6 +244,10 @@ components:
         url:
           type: "string"
           description: "イベントのURL"
+      required:
+        - "id"
+        - "title"
+        - "url"
 
     ideaRequest:
       type: "object"
