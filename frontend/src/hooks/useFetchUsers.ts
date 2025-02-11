@@ -12,7 +12,6 @@ interface FetchUsersResponse {
 }
 
 const fetchUsers = async (eventId: string): Promise<FetchUsersResponse> => {
-  console.log(eventId);
   const response = await fetch(`${BASE_URL}/events/${eventId}/users`);
   if (!response.ok) {
     throw new Error("ユーザーの取得に失敗しました");
