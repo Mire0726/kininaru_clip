@@ -13,13 +13,16 @@ interface EventRequest {
 }
 
 interface EventResponse {
-  ID: string;
-  Title: string;
-  URL: string;
+  id: string;
+  title: string;
+  url: string;
 }
 
 const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
-  const response = await axios.post<EventResponse>(`${BASE_URL}/events`, eventData);
+  const response = await axios.post<EventResponse>(
+    `${BASE_URL}/events`,
+    eventData
+  );
   return response.data;
 };
 
@@ -27,7 +30,7 @@ export const usePostEvent = () => {
   return useMutation<EventResponse, Error, EventRequest>({
     mutationFn: postEvent,
     onError: (error) => {
-      console.error('APIエラー:', error);
+      console.error("APIエラー:", error);
     },
   });
 };

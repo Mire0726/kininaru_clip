@@ -13,7 +13,7 @@ import {
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
 import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
-import AddKinaruModal from "./modal";
+import { AddKinaruModal } from "./modal";
 import Header from "../../../components/header";
 
 const categories = [
@@ -24,13 +24,14 @@ const categories = [
 ];
 
 export default function IdeaList({ params }: { params: { eventId: string } }) {
+  params.eventId = "b7c6b010-91af-4f4c-bfa7-0e7c8dfea9e5";
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data, isLoading } = useFetchIdeas(params.eventId);
+  const { data: ideas } = useFetchIdeas(params.eventId);
   const { data: users } = useFetchUsers(params.eventId);
-  const hotelIdeas = data?.hotel || [];
-  const locationIdeas = data?.location || [];
-  const restaurantIdeas = data?.restaurant || [];
-  const otherIdeas = data?.other || [];
+  const hotelIdeas = ideas?.hotel || [];
+  const locationIdeas = ideas?.location || [];
+  const restaurantIdeas = ideas?.restaurant || [];
+  const otherIdeas = ideas?.other || [];
 
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
@@ -54,6 +55,8 @@ export default function IdeaList({ params }: { params: { eventId: string } }) {
           気になるを追加
         </Button>
         <AddKinaruModal
+          eventId={params.eventId}
+          users={users}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
@@ -75,7 +78,13 @@ export default function IdeaList({ params }: { params: { eventId: string } }) {
                 <Text fontWeight="bold">{label}</Text>
               </Flex>
               <Text fontSize="sm" color="gray.500">
-                まだ登録されていません
+                {label === "飲食店"
+                  ? restaurantIdeas.map((idea) => idea.title).join("・")
+                  : label === "ホテル"
+                  ? hotelIdeas.map((idea) => idea.title).join("・")
+                  : label === "行きたい場所"
+                  ? locationIdeas.map((idea) => idea.title).join("・")
+                  : otherIdeas.map((idea) => idea.title).join("・")}
               </Text>
             </Flex>
           ))}

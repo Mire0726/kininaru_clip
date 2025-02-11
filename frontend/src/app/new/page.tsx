@@ -45,7 +45,7 @@ export default function NewGroup() {
       },
       {
         onSuccess: (data) => {
-          router.push(`/${data.URL}`);
+          router.push(`/${data.url}`);
         },
         onError: (error) => {
           toast({
