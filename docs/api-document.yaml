@@ -154,6 +154,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/userList"
+        "404":
+          description: "Event not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "event not found"
 
   /events/{eventId}/ideas/{ideaId}:
     get:

@@ -31,3 +31,17 @@ func (e *event) Create(ctx context.Context, event *model.Event) error {
 
 	return nil
 }
+
+func (e *event) Exist(ctx context.Context, eventID string) (bool, error) {
+	var event model.Event
+	result := e.db.WithContext(ctx).Where("id = ?", eventID).First(&event)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		e.logger.Logger.Error("failed to get event", log.Ferror(result.Error))
+		return false, result.Error
+	}
+
+	return true, nil
+}
