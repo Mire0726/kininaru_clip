@@ -9,11 +9,16 @@ import {
   Stack,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const imageSize = useBreakpointValue({ base: 200, md: 335 });
   const spacing = useBreakpointValue({ base: 8, md: 100 });
   const fontSize = useBreakpointValue({ base: "4xl", md: "6xl" });
+  const router = useRouter();
+  const handleClick = () => {
+    router.push("/new");
+  };
 
   return (
     <Flex
@@ -55,7 +60,11 @@ export default function Home() {
               まとめて他のユーザーに共有できるサービスです。
             </Text>
           </Box>
-          <Button colorScheme="blackAlpha" size={{ base: "md", md: "lg" }}>
+          <Button
+            colorScheme="blackAlpha"
+            size={{ base: "md", md: "lg" }}
+            onClick={handleClick}
+          >
             はじめる
           </Button>
         </Box>
