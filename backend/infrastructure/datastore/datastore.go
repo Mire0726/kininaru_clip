@@ -14,4 +14,5 @@ type Data interface {
 type ReadWriteStore interface {
 	Event() repository.Event
 	User() repository.User
+	Idea() repository.Idea
 }

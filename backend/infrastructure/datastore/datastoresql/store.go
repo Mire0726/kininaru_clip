@@ -8,6 +8,7 @@ import (
 	"kininaru_clip/backend/domain/repository"
 	"kininaru_clip/backend/infrastructure/datastore"
 	"kininaru_clip/backend/infrastructure/datastore/datastoresql/event"
+	"kininaru_clip/backend/infrastructure/datastore/datastoresql/idea"
 	"kininaru_clip/backend/infrastructure/datastore/datastoresql/user"
 
 	"gorm.io/gorm"
@@ -96,4 +97,12 @@ func (s *nonTransactionalReadWriteStore) User() repository.User {
 
 func (s *transactionalReadWriteStore) User() repository.User {
 	return user.NewUser(s.tx, s.logger)
+}
+
+func (s *nonTransactionalReadWriteStore) Idea() repository.Idea {
+	return idea.NewIdea(s.db, s.logger)
+}
+
+func (s *transactionalReadWriteStore) Idea() repository.Idea {
+	return idea.NewIdea(s.tx, s.logger)
 }
