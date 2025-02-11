@@ -39,8 +39,11 @@ func Serve(addr string) {
 		return c.String(http.StatusOK, "Welcome to unibox")
 	})
 	e.POST("/events/:eventId/users", handlerCmd.CreateUser)
+	e.POST("/events", handlerCmd.CreateEvent)
 	e.POST("/events/:eventId/ideas", handlerCmd.CreateIdea)
 	e.GET("/events/:eventId/users", handlerCmd.GetUsers)
+	e.GET("/events/:eventId/ideas", handlerCmd.GetIdeas)
+
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
 	if err := e.Start(addr); err != nil {

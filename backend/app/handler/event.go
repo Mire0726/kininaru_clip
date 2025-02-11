@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"kininaru_clip/backend/domain/model"
@@ -11,10 +12,11 @@ import (
 )
 
 func (h *Handler) CreateEvent(c echo.Context) error {
+	fmt.Println("before CreateEvent")
 	ctx := c.Request().Context()
 	req := &model.CreateEventInput{}
 
-	if err := c.Bind(req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		return err
 	}
 
@@ -35,6 +37,7 @@ func (h *Handler) CreateEvent(c echo.Context) error {
 	}
 
 	res, err := h.eventUC.Create(ctx, req)
+	
 	if err != nil {
 		log.Error("failed to create event")
 

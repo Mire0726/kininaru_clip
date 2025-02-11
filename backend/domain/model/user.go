@@ -1,11 +1,11 @@
 package model
 
 type User struct {
-	ID      string
-	Name    string
-	EventID string
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	EventID string `json:"event_id"`
 }
 
 type CreateUserInput struct {
-	Name string
+	Name string `json:"name"`
 }

@@ -1,15 +1,12 @@
 package model
 
 type Event struct {
-	ID        string
-	Title     string
-	URL       string
-	CreatedAt string
-	UpdatedAt string
+	ID    string `json:"id"`
+	Title string `json:"title"`
+	URL   string `json:"url"`
 }
 
 type CreateEventInput struct {
-	Title string
-	URL   string
+	Title string             `json:"title"`
+	Users []*CreateUserInput `json:"users"`
 }
-
