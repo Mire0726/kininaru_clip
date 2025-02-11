@@ -41,6 +41,11 @@ func (h *Handler) GetUsers(c echo.Context) error {
 
 	users, err := h.userUC.GetUsers(ctx, eventID)
 	if err != nil {
+		if e, ok := err.(*errors.Error); ok && e.Code == errors.CodeNotFound {
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error": e.Message,
+			})
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "internal server error",
 		})
