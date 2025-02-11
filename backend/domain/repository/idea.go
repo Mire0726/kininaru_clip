@@ -8,4 +8,5 @@ import (
 type Idea interface {
 	Create(ctx context.Context, idea *model.Idea) error
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
+	UpdateIdeaLikes(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
 }

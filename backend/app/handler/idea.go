@@ -44,3 +44,19 @@ func (h *Handler) GetIdeas(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, res)
 }
+
+func (h *Handler) UpdateIdeaLikes(c echo.Context) error {
+	fmt.Println("before update idea likes")
+	ctx := c.Request().Context()
+	eventId := c.Param("eventId")
+	ideaId := c.Param("ideaId")
+
+	res, err := h.ideaUC.UpdateIdeaLikes(ctx, eventId, ideaId)
+	if err != nil {
+		log.Error("failed to update idea likes")
+		return err
+	}
+
+	return c.JSON(http.StatusOK, res)
+
+}

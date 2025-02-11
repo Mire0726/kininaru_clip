@@ -12,6 +12,7 @@ import (
 type IdeaUsecase interface {
 	Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error)
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
+	UpdateIdeaLikes(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
 }
 
 type ideaUC struct {
@@ -52,4 +53,14 @@ func (u *ideaUC) GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasR
 		return nil, err
 	}
 	return ideas, nil
+}
+
+func (u *ideaUC) UpdateIdeaLikes(ctx context.Context, eventId string, ideaId string) (*model.Idea, error) {
+	idea, err := u.data.ReadWriteStore().Idea().UpdateIdeaLikes(ctx, eventId, ideaId)
+	if err != nil {
+		u.log.Error("failed to update idea likes")
+		return nil, err
+	}
+
+	return idea, nil
 }
