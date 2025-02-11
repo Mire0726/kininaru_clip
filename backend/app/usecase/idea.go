@@ -11,6 +11,7 @@ import (
 
 type IdeaUsecase interface {
 	Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error)
+	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 }
 
 type ideaUC struct {
@@ -36,10 +37,19 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 	}
 
 	if err := u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
-		u.log.Error("failed to create event")
+		u.log.Error("failed to create idea")
 
 		return nil, err
 	}
 
 	return idea, nil
+}
+
+func (u *ideaUC) GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error) {
+	ideas, err := u.data.ReadWriteStore().Idea().GetIdeas(ctx, eventId)
+	if err != nil {
+		u.log.Error("failed to get idea")
+		return nil, err
+	}
+	return ideas, nil
 }

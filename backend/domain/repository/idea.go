@@ -7,4 +7,5 @@ import (
 
 type Idea interface {
 	Create(ctx context.Context, idea *model.Idea) error
+	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 }
