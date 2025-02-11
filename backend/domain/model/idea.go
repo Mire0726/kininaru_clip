@@ -21,8 +21,8 @@ type CreateIdeaInput struct {
 }
 
 type GetIdeasReponse struct {
-	Location    []*Idea
-	Resutaurant []*Idea
-	Hotel       []*Idea
-	Other       []*Idea
+	Location   []*Idea
+	Restaurant []*Idea
+	Hotel      []*Idea
+	Other      []*Idea
 }

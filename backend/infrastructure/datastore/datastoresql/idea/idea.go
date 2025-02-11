@@ -32,39 +32,39 @@ func (r *idea) Create(ctx context.Context, idea *model.Idea) error {
 
 func (r *idea) GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error) {
 	var ideas_location []*model.Idea
-	var ideas_resutaurant []*model.Idea
+	var ideas_restaurant []*model.Idea
 	var ideas_hotel []*model.Idea
 	var ideas_other []*model.Idea
 
-	result := r.db.WithContext(ctx).Where("event_id = ? & tag = ?", eventId, "location").Find(&ideas_location)
+	result := r.db.WithContext(ctx).Where("event_id = ? AND tag = ?", eventId, "location").Find(&ideas_location)
 	if result.Error != nil {
 		r.logger.Logger.Error("failed to get ideas", log.Ferror(result.Error))
 		return nil, result.Error
 	}
 
-	result = r.db.WithContext(ctx).Where("event_id = ? & tag = ?", eventId, "resutaurant").Find(&ideas_resutaurant)
+	result = r.db.WithContext(ctx).Where("event_id = ? AND tag = ?", eventId, "restaurant").Find(&ideas_restaurant)
 	if result.Error != nil {
 		r.logger.Logger.Error("failed to get ideas", log.Ferror(result.Error))
 		return nil, result.Error
 	}
 
-	result = r.db.WithContext(ctx).Where("event_id = ? & tag = ?", eventId, "hotel").Find(&ideas_hotel)
+	result = r.db.WithContext(ctx).Where("event_id = ? AND tag = ?", eventId, "hotel").Find(&ideas_hotel)
 	if result.Error != nil {
 		r.logger.Logger.Error("failed to get ideas", log.Ferror(result.Error))
 		return nil, result.Error
 	}
 
-	result = r.db.WithContext(ctx).Where("event_id = ? & tag = ?", eventId, "other").Find(&ideas_other)
+	result = r.db.WithContext(ctx).Where("event_id = ? AND tag = ?", eventId, "other").Find(&ideas_other)
 	if result.Error != nil {
 		r.logger.Logger.Error("failed to get ideas", log.Ferror(result.Error))
 		return nil, result.Error
 	}
 
 	ideas := &model.GetIdeasReponse{
-		Location:    ideas_location,
-		Resutaurant: ideas_resutaurant,
-		Hotel:       ideas_hotel,
-		Other:       ideas_other,
+		Location:   ideas_location,
+		Restaurant: ideas_restaurant,
+		Hotel:      ideas_hotel,
+		Other:      ideas_other,
 	}
 
 	return ideas, nil
