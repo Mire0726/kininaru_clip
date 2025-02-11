@@ -6,11 +6,18 @@ interface IdeaResponse {
   title: string;
   url: string;
   createdBy: string;
-  tag: string;
+  tag: IdeaTag;
   eventId: string;
   likes: number;
   summary: string;
   memo: string;
+}
+
+enum IdeaTag {
+  LOCATION = "location",
+  RESTAURANT = "restaurant",
+  HOTEL = "hotel",
+  OTHER = "other",
 }
 
 interface FetchIdeasResponse {
@@ -21,7 +28,7 @@ interface FetchIdeasResponse {
 }
 
 const fetchIdeas = async (eventId: string): Promise<FetchIdeasResponse> => {
-  const response = await fetch(`${BASE_URL}/events/${eventId}/ideas/`);
+  const response = await fetch(`${BASE_URL}/events/${eventId}/ideas`);
   if (!response.ok) {
     throw new Error("アイデアの取得に失敗しました");
   }

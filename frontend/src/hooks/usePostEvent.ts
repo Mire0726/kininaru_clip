@@ -9,7 +9,7 @@ interface UserRequest {
 
 interface EventRequest {
   title: string;
-  user_request: UserRequest[];
+  users: UserRequest[];
 }
 
 interface EventResponse {

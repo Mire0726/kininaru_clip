@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Box,
   Button,
   Input,
   FormControl,
@@ -37,7 +36,7 @@ export default function NewGroup() {
     createEvent(
       {
         title,
-        user_request: [
+        users: [
           {
             name: memberName,
           },
@@ -45,7 +44,7 @@ export default function NewGroup() {
       },
       {
         onSuccess: (data) => {
-          router.push(`/${data.url}`);
+          router.push("/group/id?=" + data.id);
         },
         onError: (error) => {
           toast({

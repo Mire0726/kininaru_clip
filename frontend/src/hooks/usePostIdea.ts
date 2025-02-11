@@ -18,7 +18,7 @@ interface IdeaResponse {
   createdBy: string;
   tag: IdeaTag;
   memo: string;
-  eventId: string;
+  event_id: string;
   likes: number;
   summary: string;
 }

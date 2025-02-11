@@ -1,15 +1,7 @@
 "use client";
+import { use } from "react";
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Text,
-  VStack,
-  Icon,
-  HStack,
-} from "@chakra-ui/react";
+import { Button, Flex, Text, VStack, Icon } from "@chakra-ui/react";
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
 import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
@@ -22,12 +14,18 @@ const categories = [
   { label: "行きたい場所", icon: FaCamera },
   { label: "その他", icon: FaShoppingBag },
 ];
-
-export default function IdeaList({ params }: { params: { eventId: string } }) {
-  params.eventId = "b7c6b010-91af-4f4c-bfa7-0e7c8dfea9e5";
+interface Props {
+  params: Promise<{ id: string }>;
+}
+export default function IdeaList({ params }: Props) {
+  const resolvedParams = use(params);
+  const eventId = resolvedParams.id;
+  console.log("params", eventId);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data: ideas } = useFetchIdeas(params.eventId);
-  const { data: users } = useFetchUsers(params.eventId);
+  const { data: ideas } = useFetchIdeas(eventId);
+  console.log(ideas);
+  const { data: users } = useFetchUsers(eventId);
+  console.log("users", users);
   const hotelIdeas = ideas?.hotel || [];
   const locationIdeas = ideas?.location || [];
   const restaurantIdeas = ideas?.restaurant || [];
@@ -38,10 +36,12 @@ export default function IdeaList({ params }: { params: { eventId: string } }) {
       <Header />
       <Flex direction="column" align="center" mt={6} px={4}>
         <Text fontSize="2xl" fontWeight="bold" color="#46B2FF">
-          沖縄旅行
+          北海道旅行
         </Text>
         <Text fontSize="sm" color="gray.500" mb={6}>
-          {users?.users.map((user) => user.name).join("・")}
+          {users?.users?.length
+            ? users.users.map((user) => user.name).join("・")
+            : "メンバーがいません"}
         </Text>
         <Button
           bg="white"
@@ -55,8 +55,8 @@ export default function IdeaList({ params }: { params: { eventId: string } }) {
           気になるを追加
         </Button>
         <AddKinaruModal
-          eventId={params.eventId}
-          users={users}
+          eventId={eventId}
+          fetchUsers={users}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />

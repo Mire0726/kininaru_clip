@@ -37,7 +37,7 @@ interface FetchUsersResponse {
 
 interface AddKinaruModalProps {
   eventId: string;
-  users?: FetchUsersResponse;
+  fetchUsers?: FetchUsersResponse;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -61,10 +61,8 @@ interface FormEvent
   extends React.ChangeEvent<HTMLInputElement | HTMLSelectElement> {}
 
 export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
-  eventId,
-  users,
-  isOpen,
-  onClose,
+  fetchUsers,
+  ...props
 }: AddKinaruModalProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [form, setForm] = useState<FormState>({
@@ -75,20 +73,22 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
   });
   const isTitleEmpty = form.title.trim() === "";
   const { mutate: createIdea, data, error } = usePostIdea();
+  const hasUsers =
+    fetchUsers && fetchUsers.users && fetchUsers.users.length > 0;
   const handleChange = (e: FormEvent) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
   const handleSubmit = async () => {
     createIdea({
-      eventId: eventId,
+      eventId: props.eventId,
       ideaData: form,
     });
-    onClose();
+    props.onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen={props.isOpen} onClose={props.onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>気になるを追加</ModalHeader>
@@ -117,11 +117,18 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
                         value={form.createdBy}
                         onChange={handleChange}
                       >
-                        {users?.users.map((user) => (
-                          <option key={user.id} value={user.id}>
-                            {user.name}
+                        <option value="">選択してください</option>
+                        {hasUsers ? (
+                          fetchUsers.users.map((user) => (
+                            <option key={user.id} value={user.id}>
+                              {user.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            ユーザーが存在しません
                           </option>
-                        ))}
+                        )}
                       </Select>
                     </FormControl>
 
@@ -160,7 +167,7 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
 
         <ModalFooter>
           <Flex w="full" justify="space-between">
-            <Button onClick={onClose} variant="outline">
+            <Button onClick={props.onClose} variant="outline">
               戻る
             </Button>
             <Button
