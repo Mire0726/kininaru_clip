@@ -41,6 +41,7 @@ func Serve(addr string) {
 	})
 	fmt.Println("before e.POST")
 	e.POST("/events/:eventId/users", handlerCmd.CreateUser)
+	e.POST("/events", handlerCmd.CreateEvent)
 
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
