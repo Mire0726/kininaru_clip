@@ -1,17 +1,15 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"kininaru_clip/backend/domain/model"
-	"kininaru_clip/backend/pkg/log"
+	"kininaru_clip/backend/pkg/errors"
 
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) CreateUser(c echo.Context) error {
-	fmt.Println("before CreateUser")
 	ctx := c.Request().Context()
 	req := []model.CreateUserInput{}
 	id := c.Param("eventId")
@@ -20,13 +18,19 @@ func (h *Handler) CreateUser(c echo.Context) error {
 		return err
 	}
 
-	res, err := h.userUC.Create(ctx, id, req)
-
+	users, err := h.userUC.Create(ctx, id, req)
 	if err != nil {
-		log.Error("failed to create user")
-
-		return err
+		if e, ok := err.(*errors.Error); ok {
+			switch e.Code {
+			case errors.CodeAlreadyExists:
+				return c.JSON(http.StatusConflict, map[string]string{
+					"error": e.Message,
+				})
+			}
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "internal server error",
+		})
 	}
-
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(http.StatusOK, users)
 }
