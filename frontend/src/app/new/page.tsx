@@ -12,17 +12,21 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { usePostEvent } from "../../hooks/usePostEvent"; 
+import { useRouter } from "next/navigation";
+import { useToast } from "@chakra-ui/react";
+import { usePostEvent } from "../../hooks/usePostEvent";
 import Header from "../../components/header";
 
 export default function NewGroup() {
+  const router = useRouter();
+  const toast = useToast();
   const fontSize = useBreakpointValue({ base: "3xl", md: "4xl" });
   const inputSize = useBreakpointValue({ base: "md", md: "lg" });
   const buttonSize = useBreakpointValue({ base: "md", md: "lg" });
 
   const [title, setTitle] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { mutate: createEvent } = usePostEvent();
+  const { mutate: createEvent, data, error } = usePostEvent();
 
   const handleCreateEvent = () => {
     if (!title || !memberName) {
@@ -30,14 +34,30 @@ export default function NewGroup() {
       return;
     }
 
-    createEvent({
-      title,
-      user_request: [
-        {
-          name: memberName,
+    createEvent(
+      {
+        title,
+        user_request: [
+          {
+            name: memberName,
+          },
+        ],
+      },
+      {
+        onSuccess: (data) => {
+          router.push(`/${data.URL}`);
         },
-      ],
-    });
+        onError: (error) => {
+          toast({
+            title: "エラー",
+            description: "グループの作成に失敗しました",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        },
+      }
+    );
   };
 
   return (

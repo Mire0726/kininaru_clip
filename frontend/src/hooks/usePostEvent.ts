@@ -13,9 +13,9 @@ interface EventRequest {
 }
 
 interface EventResponse {
-  id: string;
-  title: string;
-  url: string;
+  ID: string;
+  Title: string;
+  URL: string;
 }
 
 const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
@@ -24,7 +24,10 @@ const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
 };
 
 export const usePostEvent = () => {
-  return useMutation({
+  return useMutation<EventResponse, Error, EventRequest>({
     mutationFn: postEvent,
+    onError: (error) => {
+      console.error('APIエラー:', error);
+    },
   });
 };

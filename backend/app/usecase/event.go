@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"time"
 
 	"kininaru_clip/backend/pkg/uid"
 
@@ -29,12 +28,11 @@ func NewEventUsecase(data datastore.Data, log *log.Logger) EventUsecase {
 }
 
 func (e *eventUC) Create(ctx context.Context, input *model.CreateEventInput) (*model.Event, error) {
+	id := uid.NewGenerator().NewULID()
 	event := &model.Event{
-		ID:        uid.NewGenerator().NewULID(),
+		ID:        id,
 		Title:     input.Title,
-		URL:       input.URL,
-		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
-		UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
+		URL:       "group/" + id,
 	}
 
 	if err := e.data.ReadWriteStore().Event().Create(ctx, event); err != nil {
@@ -43,5 +41,5 @@ func (e *eventUC) Create(ctx context.Context, input *model.CreateEventInput) (*m
 		return nil, err
 	}
 
-	return nil, nil
+	return event, nil
 }

@@ -23,10 +23,10 @@ const categories = [
   { label: "その他", icon: FaShoppingBag },
 ];
 
-export default function IdeaList({ params }: { params: { id: string } }) {
+export default function IdeaList({ params }: { params: { eventId: string } }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data, isLoading } = useFetchIdeas(params.id);
-  const { data: users } = useFetchUsers(params.id);
+  const { data, isLoading } = useFetchIdeas(params.eventId);
+  const { data: users } = useFetchUsers(params.eventId);
   const hotelIdeas = data?.hotel || [];
   const locationIdeas = data?.location || [];
   const restaurantIdeas = data?.restaurant || [];
