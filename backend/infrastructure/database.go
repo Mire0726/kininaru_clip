@@ -2,66 +2,29 @@ package infrastructure
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-// DBConfig はデータベース接続の設定を保持します
-type DBConfig struct {
-    User      string
-    Password  string
-    Host      string
-    Port      string
-    DBName    string
-    Charset   string
-    ParseTime string
-    Loc       string
-}
+func NewDB() (*gorm.DB, error) {
+	dsn := "root:mysql@tcp(mysql:3306)/db?charset=utf8mb4&parseTime=true&loc=Local"
 
-func LoadDBConfig() (*DBConfig, error) {
-    if err := godotenv.Load("./api/config/.env"); err != nil {
-        return nil, fmt.Errorf("Error loading .env file: %v", err)
-    }
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect database: %w", err)
+	}
 
-    return &DBConfig{
-        User:      os.Getenv("MYSQL_USER"),
-        Password:  os.Getenv("MYSQL_PASSWORD"),
-        Host:      os.Getenv("MYSQL_HOST"),
-        Port:      os.Getenv("MYSQL_PORT"),
-        DBName:    os.Getenv("MYSQL_DATABASE"),
-        Charset:   os.Getenv("MYSQL_CHARSET"),
-        ParseTime: os.Getenv("MYSQL_PARSE_TIME"),
-        Loc:       os.Getenv("MYSQL_LOC"),
-    }, nil
-}
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get sql.DB instance: %w", err)
+	}
 
-func NewDB(cfg *DBConfig) (*gorm.DB, error) {
-    dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
-        cfg.User,
-        cfg.Password,
-        cfg.Host,
-        cfg.Port,
-        cfg.DBName,
-        cfg.Charset,
-        cfg.ParseTime,
-        cfg.Loc,
-    )
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
 
-    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-    if err != nil {
-        return nil, fmt.Errorf("failed to connect database: %w", err)
-    }
-
-    sqlDB, err := db.DB()
-    if err != nil {
-        return nil, fmt.Errorf("failed to get sql.DB instance: %w", err)
-    }
-
-    sqlDB.SetMaxIdleConns(10)
-    sqlDB.SetMaxOpenConns(100)
-
-    return db, nil
+	return db, nil
 }

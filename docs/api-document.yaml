@@ -26,29 +26,293 @@ paths:
               schema:
                 $ref: "#/components/schemas/createEventResponse"
 
+  /events/{eventId}/ideas:
+    post:
+      tags:
+        - "ideas"
+      summary: "Create a new idea"
+      operationId: "createIdea"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ideaRequest"
+      responses:
+        "200":
+          description: "Idea created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+    get:
+      tags:
+        - "ideas"
+      summary: "Get ideas categorized by tag"
+      operationId: "getIdeaList"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get a list of idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/categorizedIdeaResponse"
+
+  /events/{eventId}/users:
+    post:
+      tags:
+        - "users"
+      summary: "Create Users"
+      operationId: "createUsers"
+      description: "指定したイベントに複数のユーザーを登録する"
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          description: "イベントの一意な識別子"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              description: "作成するユーザーの入力情報の配列"
+              items:
+                type: object
+                description: "ユーザーの入力情報"
+                properties:
+                  name:
+                    type: string
+                    description: "ユーザーの名前"
+                required:
+                  - name
+              example:
+                - name: "山田花子"
+      responses:
+        "200":
+          description: "Users created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    description: "作成されたユーザー情報の配列"
+                    items:
+                      $ref: "#/components/schemas/user"
+    get:
+      tags:
+        - "users"
+      summary: "Get a list of users"
+      operationId: "getUsers"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get list of user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userList"
+
+  /events/{eventId}/ideas/{ideaId}:
+    get:
+      tags:
+        - "ideas"
+      summary: "Get an idea by event id"
+      operationId: "getIdea"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get an idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+
+  /events/{eventId}/ideas/{ideaId}/likes:
+    put:
+      tags:
+        - "ideas"
+      summary: "Update idea's likes"
+      operationId: "updateLikes"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get an idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+
 components:
   schemas:
     createEventInput:
+      type: object
+      properties:
+        title:
+          type: string
+          description: "イベントのタイトル"
+        url:
+          type: "string"
+        users:
+          type: "array"
+          description: "作成するユーザーの入力情報の配列"
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: "ユーザーの名前"
+            required:
+              - name
+      required:
+        - "title"
+        - "url"
+        - "users"
+
+    createEventResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "イベントの一意な識別子"
+        title:
+          type: string
+          description: "イベントのタイトル"
+        url:
+          type: "string"
+          description: "イベントのURL"
+
+    ideaRequest:
       type: "object"
       properties:
         title:
           type: "string"
         url:
           type: "string"
+        createdBy:
+          type: "string"
+        tag:
+          type: "string"
+        memo:
+          type: "string"
       required:
         - "title"
-    createEventResponse:
+        - "url"
+        - "createdBy"
+        - "tag"
+
+    ideaResponse:
       type: "object"
       properties:
         id:
           type: "string"
+          format: "uuid"
         title:
           type: "string"
         url:
           type: "string"
-        createdAt:
+        createdBy:
           type: "string"
-          format: "date-time"
-        updatedAt:
+          format: "uuid"
+        tag:
           type: "string"
-          format: "date-time"
+        memo:
+          type: "string"
+        eventId:
+          type: "string"
+          format: "uuid"
+        likes:
+          type: "integer"
+          format: "int32"
+        summary:
+          type: "string"
+
+    categorizedIdeaResponse:
+      type: "object"
+      properties:
+        location:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+        restaurant:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+        hotel:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+        other:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ideaResponse"
+
+    user:
+      type: "object"
+      properties:
+        id:
+          type: string
+          description: "ユーザーの一意な識別子"
+        name:
+          type: string
+          description: "ユーザーの名前"
+        eventId:
+          type: string
+          description: "関連するイベントの識別子"
+      required:
+        - "id"
+        - "name"
+        - "eventId"
+
+    userList:
+      type: "object"
+      properties:
+        users:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/user"
+      required:
+        - "users"

@@ -1,0 +1,47 @@
+package usecase
+
+import (
+	"context"
+
+	"kininaru_clip/backend/pkg/uid"
+
+	"kininaru_clip/backend/pkg/log"
+
+	"kininaru_clip/backend/domain/model"
+	"kininaru_clip/backend/infrastructure/datastore"
+)
+
+type UserUsecase interface {
+	// 指定されたイベントIDに紐づくユーザー群を作成する
+	Create(ctx context.Context, eventID string, inputs []model.CreateUserInput) ([]*model.User, error)
+}
+
+type userUC struct {
+	data datastore.Data
+	log  *log.Logger
+}
+
+func NewUserUsecase(data datastore.Data, log *log.Logger) UserUsecase {
+	return &userUC{
+		data: data,
+		log:  log,
+	}
+}
+
+func (u *userUC) Create(ctx context.Context, eventID string, input []model.CreateUserInput) ([]*model.User, error) {
+	var users []*model.User
+	for _, input := range input {
+		users = append(users, &model.User{
+			ID:      uid.NewGenerator().NewULID(),
+			Name:    input.Name,
+			EventID: eventID,
+		})
+	}
+
+	if err := u.data.ReadWriteStore().User().BulkCreate(ctx, users); err != nil {
+		u.log.Error("failed to create users")
+		return nil, err
+	}
+
+	return nil, nil
+}
