@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS ideas (
     title VARCHAR(255) NOT NULL,
     url VARCHAR(2083),
     created_by CHAR(36) NOT NULL,
-    tag VARCHAR(100),
+    tag ENUM('location', 'restaurant', 'hotel', 'other'),
     event_id CHAR(36),
     likes INT DEFAULT 0,
     summary TEXT,
