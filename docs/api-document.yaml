@@ -74,27 +74,48 @@ paths:
     post:
       tags:
         - "users"
-      summary: "Create a list of users"
-      operationId: "createUser"
+      summary: "Create Users"
+      operationId: "createUsers"
+      description: "指定したイベントに複数のユーザーを登録する"
       parameters:
-        - name: "eventId"
-          in: path
+        - in: path
+          name: eventId
           required: true
+          description: "イベントの一意な識別子"
           schema:
-            type: "string"
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/userList"
+              type: array
+              description: "作成するユーザーの入力情報の配列"
+              items:
+                type: object
+                description: "ユーザーの入力情報"
+                properties:
+                  name:
+                    type: string
+                    description: "ユーザーの名前"
+                required:
+                  - name
+              example:
+                - name: "山田花子"
       responses:
         "200":
-          description: "List of User created"
+          description: "Users created successfully"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/userList"
+                type: object
+                properties:
+                  users:
+                    type: array
+                    description: "作成されたユーザー情報の配列"
+                    items:
+                      $ref: "#/components/schemas/user"
     get:
       tags:
         - "users"
@@ -167,39 +188,46 @@ paths:
 components:
   schemas:
     createEventInput:
-      type: "object"
+      type: object
       properties:
-        id:
-          type: "string"
         title:
-          type: "string"
+          type: string
+          description: "イベントのタイトル"
         url:
           type: "string"
         users:
           type: "array"
+          description: "作成するユーザーの入力情報の配列"
           items:
-            $ref: "#/components/schemas/user"
+            type: object
+            properties:
+              name:
+                type: string
+                description: "ユーザーの名前"
+            required:
+              - name
       required:
-        - "id"
         - "title"
         - "url"
         - "users"
 
     createEventResponse:
-      type: "object"
+      type: object
       properties:
         id:
-          type: "string"
+          type: string
+          format: uuid
+          description: "イベントの一意な識別子"
         title:
-          type: "string"
+          type: string
+          description: "イベントのタイトル"
         url:
           type: "string"
+          description: "イベントのURL"
 
     ideaRequest:
       type: "object"
       properties:
-        id:
-          type: "string"
         title:
           type: "string"
         url:
@@ -211,7 +239,6 @@ components:
         memo:
           type: "string"
       required:
-        - "id"
         - "title"
         - "url"
         - "createdBy"
@@ -222,18 +249,21 @@ components:
       properties:
         id:
           type: "string"
+          format: "uuid"
         title:
           type: "string"
         url:
           type: "string"
         createdBy:
           type: "string"
+          format: "uuid"
         tag:
           type: "string"
         memo:
           type: "string"
         eventId:
           type: "string"
+          format: "uuid"
         likes:
           type: "integer"
           format: "int32"
@@ -264,11 +294,14 @@ components:
       type: "object"
       properties:
         id:
-          type: "string"
+          type: string
+          description: "ユーザーの一意な識別子"
         name:
-          type: "string"
+          type: string
+          description: "ユーザーの名前"
         eventId:
-          type: "string"
+          type: string
+          description: "関連するイベントの識別子"
       required:
         - "id"
         - "name"
