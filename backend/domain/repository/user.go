@@ -8,4 +8,5 @@ import (
 
 type User interface {
 	BulkCreate(ctx context.Context, users []*model.User) error
+	Exist(ctx context.Context, userName string) (bool, error)
 }
