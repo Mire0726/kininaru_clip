@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 
 	"kininaru_clip/backend/app/handler"
@@ -39,8 +38,8 @@ func Serve(addr string) {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Welcome to unibox")
 	})
-	fmt.Println("before e.POST")
 	e.POST("/events/:eventId/users", handlerCmd.CreateUser)
+	e.POST("/events/:eventId/ideas", handlerCmd.CreateIdea)
 
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
