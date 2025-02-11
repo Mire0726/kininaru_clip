@@ -31,7 +31,7 @@ func (u *userUC) Create(ctx context.Context, eventID string, input []model.Creat
 	var users []*model.User
 
 	for _, input := range input {
-		if exist, err := u.data.ReadWriteStore().User().Exist(ctx, input.Name); err != nil {
+		if exist, err := u.data.ReadWriteStore().User().Exist(ctx, eventID, input.Name); err != nil {
 			u.log.Error("failed to check user existence")
 
 			return nil, err

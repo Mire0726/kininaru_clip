@@ -32,9 +32,11 @@ func (r *user) BulkCreate(ctx context.Context, users []*model.User) error {
 	return nil
 }
 
-func (r *user) Exist(ctx context.Context, userName string) (bool, error) {
+func (r *user) Exist(ctx context.Context, eventID, userName string) (bool, error) {
 	var user model.User
-	result := r.db.WithContext(ctx).Where("name = ?", userName).First(&user)
+	result := r.db.WithContext(ctx).Where("name = ?", userName).
+		Where("event_id = ?", eventID).
+		First(&user)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return false, nil
