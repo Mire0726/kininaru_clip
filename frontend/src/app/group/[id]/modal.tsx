@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePostIdea } from "@/hooks/usePostIdea";
 import {
   Modal,
   ModalOverlay,
@@ -26,57 +27,68 @@ import {
 } from "@chakra-ui/react";
 
 const categories = ["飲食店", "ホテル", "行きたい場所", "その他"];
-const users = ["こしたろう", "こしむ"];
+
+interface FetchUsersResponse {
+  users: Array<{
+    id: string;
+    name: string;
+  }>;
+}
 
 interface AddKinaruModalProps {
+  eventId: string;
+  fetchUsers?: FetchUsersResponse;
   isOpen: boolean;
   onClose: () => void;
 }
 
 interface FormState {
-  user: string;
   title: string;
-  mapsUrl: string;
+  url?: string;
+  createdBy: string;
+  tag: IdeaTag;
+  memo?: string;
+}
+
+enum IdeaTag {
+  LOCATION = "location",
+  RESTAURANT = "restaurant",
+  HOTEL = "hotel",
+  OTHER = "other",
 }
 
 interface FormEvent
   extends React.ChangeEvent<HTMLInputElement | HTMLSelectElement> {}
 
-export default function AddKinaruModal({
-  isOpen,
-  onClose,
-}: AddKinaruModalProps) {
+export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
+  fetchUsers,
+  ...props
+}: AddKinaruModalProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [form, setForm] = useState<FormState>({
-    user: users[0],
+    createdBy: "",
     title: "",
-    mapsUrl: "",
+    url: "",
+    tag: IdeaTag.LOCATION,
   });
   const isTitleEmpty = form.title.trim() === "";
+  const { mutate: createIdea, data, error } = usePostIdea();
+  const hasUsers =
+    fetchUsers && fetchUsers.users && fetchUsers.users.length > 0;
   const handleChange = (e: FormEvent) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
   const handleSubmit = async () => {
-    try {
-      if (isTitleEmpty) {
-        return;
-      }
-      // TODO: APIエンドポイントへのデータ送信を実装
-      onClose();
-      setForm({
-        user: users[0],
-        title: "",
-        mapsUrl: "",
-      });
-      setSelectedTab(0);
-    } catch (error) {
-      console.error("送信エラー:", error);
-    }
+    createIdea({
+      eventId: props.eventId,
+      ideaData: form,
+    });
+    props.onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen={props.isOpen} onClose={props.onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>気になるを追加</ModalHeader>
@@ -102,14 +114,21 @@ export default function AddKinaruModal({
                       </FormLabel>
                       <Select
                         name="user"
-                        value={form.user}
+                        value={form.createdBy}
                         onChange={handleChange}
                       >
-                        {users.map((user) => (
-                          <option key={user} value={user}>
-                            {user}
+                        <option value="">選択してください</option>
+                        {hasUsers ? (
+                          fetchUsers.users.map((user) => (
+                            <option key={user.id} value={user.id}>
+                              {user.name}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            ユーザーが存在しません
                           </option>
-                        ))}
+                        )}
                       </Select>
                     </FormControl>
 
@@ -135,7 +154,7 @@ export default function AddKinaruModal({
                       <Input
                         name="mapsUrl"
                         placeholder="入力すると、プレビューやAI提案機能を使用できます"
-                        value={form.mapsUrl}
+                        value={form.url}
                         onChange={handleChange}
                       />
                     </FormControl>
@@ -148,7 +167,7 @@ export default function AddKinaruModal({
 
         <ModalFooter>
           <Flex w="full" justify="space-between">
-            <Button onClick={onClose} variant="outline">
+            <Button onClick={props.onClose} variant="outline">
               戻る
             </Button>
             <Button
@@ -163,4 +182,4 @@ export default function AddKinaruModal({
       </ModalContent>
     </Modal>
   );
-}
+};

@@ -13,6 +13,7 @@ import (
 
 type UserUsecase interface {
 	Create(ctx context.Context, eventID string, inputs []model.CreateUserInput) ([]*model.User, error)
+	GetUsers(ctx context.Context, eventID string) ([]*model.User, error)
 }
 
 type userUC struct {
@@ -54,5 +55,24 @@ func (u *userUC) Create(ctx context.Context, eventID string, input []model.Creat
 		return nil, err
 	}
 
+	return users, nil
+}
+
+func (u *userUC) GetUsers(ctx context.Context, eventID string) ([]*model.User, error) {
+	exist, err := u.data.ReadWriteStore().Event().Exist(ctx, eventID)
+	if err != nil {
+
+		u.log.Error("failed to check event existence")
+		return nil, err
+	}
+	if !exist {
+		u.log.Error("event does not exist")
+		return nil, errors.NewNotFoundError("event")
+	}
+	users, err := u.data.ReadWriteStore().User().GetUsers(ctx, eventID)
+	if err != nil {
+		u.log.Error("failed to get users")
+		return nil, err
+	}
 	return users, nil
 }

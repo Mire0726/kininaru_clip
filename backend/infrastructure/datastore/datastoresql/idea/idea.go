@@ -31,6 +31,17 @@ func (r *idea) Create(ctx context.Context, idea *model.Idea) error {
 	return nil
 }
 
+func (r *idea) GetIdea(ctx context.Context, eventId string, ideaId string) (*model.Idea, error) {
+	var idea *model.Idea
+	result := r.db.WithContext(ctx).Where("event_id = ?", eventId).Where("id = ?", ideaId).First(&idea)
+	if result.Error != nil {
+		r.logger.Logger.Error("failed to get an idea", log.Ferror(result.Error))
+		return nil, result.Error
+	}
+
+	return idea, nil
+}
+
 func (r *idea) GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error) {
 	var ideas_location []*model.Idea
 	var ideas_restaurant []*model.Idea
