@@ -76,15 +76,52 @@ export default function IdeaList({ params }: Props) {
                 <Icon as={icon} boxSize={6} color="#46B2FF" />
                 <Text fontWeight="bold">{label}</Text>
               </Flex>
-              <Text fontSize="sm" color="gray.500">
-                {label === "飲食店"
-                  ? restaurantIdeas.map((idea) => idea.title).join("・")
-                  : label === "ホテル"
-                  ? hotelIdeas.map((idea) => idea.title).join("・")
-                  : label === "行きたい場所"
-                  ? locationIdeas.map((idea) => idea.title).join("・")
-                  : otherIdeas.map((idea) => idea.title).join("・")}
-              </Text>
+              <Flex direction="column" gap={2}>
+                {label === "飲食店" &&
+                  restaurantIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+                {label === "ホテル" &&
+                  hotelIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+                {label === "行きたい場所" &&
+                  locationIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+                {label === "その他" &&
+                  otherIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+              </Flex>
             </Flex>
           ))}
         </VStack>
