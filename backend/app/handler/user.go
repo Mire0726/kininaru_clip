@@ -34,3 +34,24 @@ func (h *Handler) CreateUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, users)
 }
+
+func (h *Handler) GetUsers(c echo.Context) error {
+	ctx := c.Request().Context()
+	eventID := c.Param("eventId")
+
+	users, err := h.userUC.GetUsers(ctx, eventID)
+	if err != nil {
+		if e, ok := err.(*errors.Error); ok && e.Code == errors.CodeNotFound {
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error": e.Message,
+			})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "internal server error",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"users": users,
+	})
+}
