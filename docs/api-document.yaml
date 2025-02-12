@@ -6,6 +6,25 @@ servers:
   - url: "http://localhost:8080"
   - url: "http://localhost:3000"
 paths:
+  /events/{eventId}:
+    get:
+      tags:
+        - "events"
+      summary: "Get event"
+      oprerationId: "GetEvent"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Event created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/createEventResponse"
   /events:
     post:
       tags:

@@ -37,7 +37,7 @@ func (h *Handler) CreateEvent(c echo.Context) error {
 	}
 
 	res, err := h.eventUC.Create(ctx, req)
-	
+
 	if err != nil {
 		log.Error("failed to create event")
 
@@ -45,4 +45,18 @@ func (h *Handler) CreateEvent(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, res)
+}
+
+func (h *Handler) GetEvent(c echo.Context) error {
+	fmt.Println("before GetEvent")
+	ctx := c.Request().Context()
+	eventId := c.Param("eventId")
+
+	res, err := h.eventUC.GetEvent(ctx, eventId)
+	if err != nil {
+		log.Error("failed to get an event")
+		return err
+	}
+
+	return c.JSON(http.StatusOK, res)
 }
