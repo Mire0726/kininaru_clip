@@ -6,7 +6,7 @@ const BASE_URL = "http://localhost:8080";
 interface IdeaRequest {
   title: string;
   url?: string;
-  createdBy: string;
+  created_by: string;
   tag: IdeaTag;
   memo?: string;
 }
@@ -15,7 +15,7 @@ interface IdeaResponse {
   id: string;
   title: string;
   url: string;
-  createdBy: string;
+  created_by: string;
   tag: IdeaTag;
   memo: string;
   event_id: string;

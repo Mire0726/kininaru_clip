@@ -5,6 +5,7 @@ import { Button, Flex, Text, VStack, Icon } from "@chakra-ui/react";
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
 import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
+import { useFetchEvent } from "@/hooks/useFetchEvent";
 import { AddKinaruModal } from "./modal";
 import Header from "../../../components/header";
 
@@ -23,6 +24,7 @@ export default function IdeaList({ params }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { fetchIdeas: ideas } = useFetchIdeas(eventId);
   const { fetchUsers: users } = useFetchUsers(eventId);
+  const { fetchEvent: event } = useFetchEvent(eventId);
   const hotelIdeas = ideas?.hotel || [];
   const locationIdeas = ideas?.location || [];
   const restaurantIdeas = ideas?.restaurant || [];
@@ -33,7 +35,7 @@ export default function IdeaList({ params }: Props) {
       <Header />
       <Flex direction="column" align="center" mt={6} px={4}>
         <Text fontSize="2xl" fontWeight="bold" color="#46B2FF">
-          北海道旅行
+          {event?.title}
         </Text>
         <Text fontSize="sm" color="gray.500" mb={6}>
           {users?.users?.length
@@ -74,15 +76,52 @@ export default function IdeaList({ params }: Props) {
                 <Icon as={icon} boxSize={6} color="#46B2FF" />
                 <Text fontWeight="bold">{label}</Text>
               </Flex>
-              <Text fontSize="sm" color="gray.500">
-                {label === "飲食店"
-                  ? restaurantIdeas.map((idea) => idea.title).join("・")
-                  : label === "ホテル"
-                  ? hotelIdeas.map((idea) => idea.title).join("・")
-                  : label === "行きたい場所"
-                  ? locationIdeas.map((idea) => idea.title).join("・")
-                  : otherIdeas.map((idea) => idea.title).join("・")}
-              </Text>
+              <Flex direction="column" gap={2}>
+                {label === "飲食店" &&
+                  restaurantIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+                {label === "ホテル" &&
+                  hotelIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+                {label === "行きたい場所" &&
+                  locationIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+                {label === "その他" &&
+                  otherIdeas.map((idea) => (
+                    <Text
+                      key={idea.id}
+                      fontSize="sm"
+                      color="gray.700"
+                      textAlign="right"
+                    >
+                      {idea.title}
+                    </Text>
+                  ))}
+              </Flex>
             </Flex>
           ))}
         </VStack>
