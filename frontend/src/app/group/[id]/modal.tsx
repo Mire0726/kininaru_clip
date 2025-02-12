@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePostIdea } from "@/hooks/usePostIdea";
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Modal,
   ModalOverlay,
@@ -21,7 +22,6 @@ import {
   VStack,
   FormControl,
   FormLabel,
-  FormHelperText,
   FormErrorMessage,
   Flex,
 } from "@chakra-ui/react";
@@ -45,7 +45,7 @@ interface AddKinaruModalProps {
 interface FormState {
   title: string;
   url?: string;
-  createdBy: string;
+  created_by: string;
   tag: IdeaTag;
   memo?: string;
 }
@@ -65,26 +65,74 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
   ...props
 }: AddKinaruModalProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>({
-    createdBy: "",
+    created_by: "",
     title: "",
     url: "",
-    tag: IdeaTag.LOCATION,
+    tag: IdeaTag.RESTAURANT,
   });
+  const clearForm = () => {
+    setForm({
+      created_by: "",
+      title: "",
+      url: "",
+      tag: IdeaTag.RESTAURANT,
+    });
+    setSelectedTab(0);
+  };
   const isTitleEmpty = form.title.trim() === "";
   const { mutate: createIdea, data, error } = usePostIdea();
   const hasUsers =
     fetchUsers && fetchUsers.users && fetchUsers.users.length > 0;
+  const handleTabChange = (index: number) => {
+    setSelectedTab(index);
+    const newTag = (() => {
+      switch (index) {
+        case 0:
+          return IdeaTag.RESTAURANT;
+        case 1:
+          return IdeaTag.HOTEL;
+        case 2:
+          return IdeaTag.LOCATION;
+        case 3:
+          return IdeaTag.OTHER;
+        default:
+          return IdeaTag.RESTAURANT;
+      }
+    })();
+    setForm((prev) => ({ ...prev, tag: newTag }));
+  };
+
   const handleChange = (e: FormEvent) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === "user") {
+      setForm((prev) => ({ ...prev, created_by: value }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
+
   const handleSubmit = async () => {
-    createIdea({
-      eventId: props.eventId,
-      ideaData: form,
-    });
-    props.onClose();
+    createIdea(
+      {
+        eventId: props.eventId,
+        ideaData: form,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["ideas", props.eventId],
+          });
+          clearForm();
+          props.onClose();
+        },
+        onError: (error) => {
+          console.log(form);
+          console.error("APIエラー:", error);
+        },
+      }
+    );
   };
 
   return (
@@ -96,7 +144,7 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
         <ModalBody>
           <Tabs
             index={selectedTab}
-            onChange={setSelectedTab}
+            onChange={handleTabChange}
             variant="soft-rounded"
           >
             <TabList>
@@ -114,8 +162,9 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
                       </FormLabel>
                       <Select
                         name="user"
-                        value={form.createdBy}
+                        value={form.created_by}
                         onChange={handleChange}
+                        isRequired
                       >
                         <option value="">選択してください</option>
                         {hasUsers ? (

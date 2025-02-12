@@ -10,7 +10,6 @@ import (
 )
 
 func (h *Handler) CreateIdea(c echo.Context) error {
-	fmt.Println("before CreateIdea")
 	ctx := c.Request().Context()
 	req := model.CreateIdeaInput{}
 	id := c.Param("eventId")
@@ -20,7 +19,6 @@ func (h *Handler) CreateIdea(c echo.Context) error {
 	}
 
 	res, err := h.ideaUC.Create(ctx, id, req)
-
 	if err != nil {
 		log.Error("failed to create idea")
 
