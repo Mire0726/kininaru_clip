@@ -5,6 +5,7 @@ import { Button, Flex, Text, VStack, Icon } from "@chakra-ui/react";
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
 import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
+import { useFetchEvent } from "@/hooks/useFetchEvent";
 import { AddKinaruModal } from "./modal";
 import Header from "../../../components/header";
 
@@ -23,6 +24,7 @@ export default function IdeaList({ params }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { fetchIdeas: ideas } = useFetchIdeas(eventId);
   const { fetchUsers: users } = useFetchUsers(eventId);
+  const { fetchEvent: event } = useFetchEvent(eventId);
   const hotelIdeas = ideas?.hotel || [];
   const locationIdeas = ideas?.location || [];
   const restaurantIdeas = ideas?.restaurant || [];
@@ -33,7 +35,7 @@ export default function IdeaList({ params }: Props) {
       <Header />
       <Flex direction="column" align="center" mt={6} px={4}>
         <Text fontSize="2xl" fontWeight="bold" color="#46B2FF">
-          北海道旅行
+          {event?.title}
         </Text>
         <Text fontSize="sm" color="gray.500" mb={6}>
           {users?.users?.length
