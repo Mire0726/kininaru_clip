@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePostIdea } from "@/hooks/usePostIdea";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Modal,
   ModalOverlay,
@@ -108,6 +108,8 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
     const { name, value } = e.target;
     if (name === "user") {
       setForm((prev) => ({ ...prev, created_by: value }));
+    } else if (name === "mapsUrl") {
+      setForm((prev) => ({ ...prev, url: value }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
