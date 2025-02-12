@@ -41,8 +41,10 @@ func Serve(addr string) {
 	e.POST("/events/:eventId/users", handlerCmd.CreateUser)
 	e.POST("/events", handlerCmd.CreateEvent)
 	e.POST("/events/:eventId/ideas", handlerCmd.CreateIdea)
+	e.GET("/events/:eventId/users", handlerCmd.GetUsers)
 	e.GET("/events/:eventId/ideas", handlerCmd.GetIdeas)
 	e.GET("/events/:eventId/ideas/:ideaId", handlerCmd.GetIdea)
+	e.GET("/events/:eventId", handlerCmd.GetEvent)
 
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
