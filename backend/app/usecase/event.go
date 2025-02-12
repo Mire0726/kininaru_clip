@@ -42,6 +42,21 @@ func (e *eventUC) Create(ctx context.Context, input *model.CreateEventInput) (*m
 		return nil, err
 	}
 
+	users := make([]*model.User, 0, len(input.Users))
+	for _, user := range input.Users {
+		users = append(users, &model.User{
+			ID:      uid.NewGenerator().NewULID(),
+			Name:    user.Name,
+			EventID: id,
+		})
+	}
+
+	if err := e.data.ReadWriteStore().User().BulkCreate(ctx, users); err != nil {
+		e.log.Error("failed to create users")
+
+		return nil, err
+	}
+
 	return event, nil
 }
 

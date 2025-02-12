@@ -1,17 +1,11 @@
 "use client";
+import { use } from "react";
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Text,
-  VStack,
-  Icon,
-  HStack,
-} from "@chakra-ui/react";
+import { Button, Flex, Text, VStack, Icon } from "@chakra-ui/react";
 import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
-import AddKinaruModal from "./modal";
+import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
+import { useFetchUsers } from "@/hooks/useFetchUsers";
+import { AddKinaruModal } from "./modal";
 import Header from "../../../components/header";
 
 const categories = [
@@ -20,18 +14,31 @@ const categories = [
   { label: "行きたい場所", icon: FaCamera },
   { label: "その他", icon: FaShoppingBag },
 ];
-
-export default function IdeaList({ params }: { params: { id: string } }) {
+interface Props {
+  params: Promise<{ id: string }>;
+}
+export default function IdeaList({ params }: Props) {
+  const resolvedParams = use(params);
+  const eventId = resolvedParams.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { fetchIdeas: ideas } = useFetchIdeas(eventId);
+  const { fetchUsers: users } = useFetchUsers(eventId);
+  const hotelIdeas = ideas?.hotel || [];
+  const locationIdeas = ideas?.location || [];
+  const restaurantIdeas = ideas?.restaurant || [];
+  const otherIdeas = ideas?.other || [];
+
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
       <Header />
       <Flex direction="column" align="center" mt={6} px={4}>
         <Text fontSize="2xl" fontWeight="bold" color="#46B2FF">
-          沖縄旅行
+          北海道旅行
         </Text>
         <Text fontSize="sm" color="gray.500" mb={6}>
-          こしたろう・こしむ
+          {users?.users?.length
+            ? users.users.map((user) => user.name).join("・")
+            : "メンバーがいません"}
         </Text>
         <Button
           bg="white"
@@ -45,6 +52,8 @@ export default function IdeaList({ params }: { params: { id: string } }) {
           気になるを追加
         </Button>
         <AddKinaruModal
+          eventId={eventId}
+          fetchUsers={users}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
@@ -66,7 +75,13 @@ export default function IdeaList({ params }: { params: { id: string } }) {
                 <Text fontWeight="bold">{label}</Text>
               </Flex>
               <Text fontSize="sm" color="gray.500">
-                まだ登録されていません
+                {label === "飲食店"
+                  ? restaurantIdeas.map((idea) => idea.title).join("・")
+                  : label === "ホテル"
+                  ? hotelIdeas.map((idea) => idea.title).join("・")
+                  : label === "行きたい場所"
+                  ? locationIdeas.map((idea) => idea.title).join("・")
+                  : otherIdeas.map((idea) => idea.title).join("・")}
               </Text>
             </Flex>
           ))}
