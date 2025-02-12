@@ -20,12 +20,9 @@ interface Props {
 export default function IdeaList({ params }: Props) {
   const resolvedParams = use(params);
   const eventId = resolvedParams.id;
-  console.log("params", eventId);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data: ideas } = useFetchIdeas(eventId);
-  console.log(ideas);
-  const { data: users } = useFetchUsers(eventId);
-  console.log("users", users);
+  const { fetchIdeas: ideas } = useFetchIdeas(eventId);
+  const { fetchUsers: users } = useFetchUsers(eventId);
   const hotelIdeas = ideas?.hotel || [];
   const locationIdeas = ideas?.location || [];
   const restaurantIdeas = ideas?.restaurant || [];

@@ -20,8 +20,13 @@ const fetchUsers = async (eventId: string): Promise<FetchUsersResponse> => {
 };
 
 export const useFetchUsers = (eventId: string) => {
-  return useQuery<FetchUsersResponse>({
-    queryKey: ["eventId", eventId],
+  const { data, isLoading } = useQuery<FetchUsersResponse>({
+    queryKey: ["users", eventId],
     queryFn: () => fetchUsers(eventId),
   });
+
+  return {
+    fetchUsers: data,
+    isLoading,
+  };
 };

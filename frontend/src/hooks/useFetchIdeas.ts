@@ -36,8 +36,13 @@ const fetchIdeas = async (eventId: string): Promise<FetchIdeasResponse> => {
 };
 
 export const useFetchIdeas = (eventId: string) => {
-  return useQuery<FetchIdeasResponse>({
-    queryKey: ["eventId", eventId],
+  const { data, isLoading } = useQuery<FetchIdeasResponse>({
+    queryKey: ["ideas", eventId],
     queryFn: () => fetchIdeas(eventId),
   });
+
+  return {
+    fetchIdeas: data,
+    isLoading,
+  };
 };
