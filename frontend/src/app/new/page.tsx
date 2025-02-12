@@ -44,7 +44,7 @@ export default function NewGroup() {
       },
       {
         onSuccess: (data) => {
-          router.push("/group/id?=" + data.id);
+          router.push(data.url);
         },
         onError: (error) => {
           toast({
