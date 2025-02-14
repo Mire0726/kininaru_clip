@@ -234,6 +234,31 @@ paths:
               schema:
                 $ref: "#/components/schemas/ideaResponse"
 
+  /events/{eventId}/ideas/{ideaId}/summary:
+    post:
+      tags:
+        - "ideas"
+      summary: "Update idea's summary"
+      operationId: "updateSummary"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Update an idea's summary"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
+
 components:
   schemas:
     createEventInput:
