@@ -14,6 +14,7 @@ interface LikeResponse {
   likes: number;
   summary: string;
 }
+
 enum IdeaTag {
   LOCATION = "location",
   RESTAURANT = "restaurant",
@@ -21,19 +22,19 @@ enum IdeaTag {
   OTHER = "other",
 }
 
-const postLike = async (
+const updateLike = async (
   eventId: string,
   ideaId: string
 ): Promise<LikeResponse> => {
-  const response = await axios.post<LikeResponse>(
-    `${BASE_URL}/events/${eventId}/ideas/${ideaId}/like`
+  const response = await axios.put<LikeResponse>(
+    `${BASE_URL}/events/${eventId}/ideas/${ideaId}/likes`
   );
   return response.data;
 };
 
-export const usePostLike = () => {
+export const useUpdateLike = () => {
   return useMutation<LikeResponse, Error, { eventId: string; ideaId: string }>({
-    mutationFn: ({ eventId, ideaId }) => postLike(eventId, ideaId),
+    mutationFn: ({ eventId, ideaId }) => updateLike(eventId, ideaId),
     onError: (error) => {
       console.error("APIエラー:", error);
     },
