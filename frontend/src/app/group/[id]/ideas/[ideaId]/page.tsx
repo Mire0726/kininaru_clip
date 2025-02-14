@@ -9,6 +9,7 @@ import { SubHeader } from "@/components/SubHeader";
 import Header from "@/components/header";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@chakra-ui/react";
+import { Textarea } from "@chakra-ui/react";
 import {
   Button,
   Flex,
@@ -167,23 +168,27 @@ export default function IdeaList({ params }: Props) {
         </Text>
         <Divider my={4} />
 
-        <Flex align="center" gap={2}>
+        <Flex direction="column" gap={2}>
           <Text fontSize="md" fontWeight="bold">
             memo:
           </Text>
           {isEditing ? (
-            <Input
+            <Textarea
               value={editedMemo}
               onChange={(e) => setEditedMemo(e.target.value)}
+              resize="vertical"
+              minH="100px"
             />
           ) : (
-            <Text>{idea?.memo}</Text>
+            <Text whiteSpace="pre-wrap" wordBreak="break-word">
+              {idea?.memo}
+            </Text>
           )}
         </Flex>
 
         <Box h="40px" borderBottom="1px solid #46B2FF" />
 
-        <Flex align="center" gap={2} mt={4}>
+        <Flex direction="column" gap={2} mt={4}>
           <Text fontSize="md" fontWeight="bold">
             Google Maps URL：
           </Text>
@@ -191,9 +196,16 @@ export default function IdeaList({ params }: Props) {
             <Input
               value={editedUrl}
               onChange={(e) => setEditedUrl(e.target.value)}
+              wordBreak="break-all"
             />
           ) : (
-            <Link href={idea?.url} color="blue.500" isExternal>
+            <Link
+              href={idea?.url}
+              color="blue.500"
+              isExternal
+              wordBreak="break-all"
+              overflowWrap="break-word"
+            >
               {idea?.url}
             </Link>
           )}
@@ -209,6 +221,17 @@ export default function IdeaList({ params }: Props) {
             </Button>
           </Flex>
         )}
+        <Button
+          mt={6}
+          w="full"
+          bg="white"
+          border="1px solid #46B2FF"
+          color="#46B2FF"
+          _hover={{ bg: "#46B2FF", color: "white" }}
+          borderRadius="md"
+        >
+          AI提案機能を利用する
+        </Button>
       </Box>
     </Flex>
   );
