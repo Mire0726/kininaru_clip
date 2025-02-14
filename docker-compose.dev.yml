@@ -19,6 +19,17 @@ services:
     depends_on:
       - mysql
 
+  ai-engine:
+    build:
+      context: ./ai_engine
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai_engine:/app
+    networks:
+      - app-network
+
   frontend:
     build:
       context: ./frontend
