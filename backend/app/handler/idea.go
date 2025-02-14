@@ -88,3 +88,17 @@ func (h *Handler) UpdateIdeaLikes(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, res)
 }
+
+func (h *Handler) DeleteIdea(c echo.Context) error {
+	ctx := c.Request().Context()
+	eventId := c.Param("eventId")
+	ideaId := c.Param("ideaId")
+
+	err := h.ideaUC.Delete(ctx, eventId, ideaId)
+	if err != nil {
+		log.Error("failed to delete idea")
+		return err
+	}
+
+	return c.JSON(http.StatusOK, nil)
+}

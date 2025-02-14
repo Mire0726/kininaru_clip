@@ -16,6 +16,7 @@ type IdeaUsecase interface {
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
+	Delete(ctx context.Context, eventId, ideaId string) error 
 }
 
 type ideaUC struct {
@@ -104,4 +105,12 @@ func (u *ideaUC) UpdateIdeaLikes(ctx context.Context, eventId string, ideaId str
 	}
 
 	return idea, nil
+}
+
+func (u *ideaUC) Delete(ctx context.Context, eventId, ideaId string) error {
+	if err := u.data.ReadWriteStore().Idea().Delete(ctx, eventId, ideaId); err != nil {
+		u.log.Error("failed to delete idea")
+		return err
+	}
+	return nil
 }

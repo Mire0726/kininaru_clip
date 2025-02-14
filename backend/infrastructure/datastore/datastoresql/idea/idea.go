@@ -98,7 +98,7 @@ func (r *idea) Update(ctx context.Context, eventId, ideaId string, input model.U
 		r.logger.Error("failed to update idea", log.Ferror(result.Error))
 		return nil, result.Error
 	}
-	
+
 	var updateIdea *model.Idea
 	result = r.db.WithContext(ctx).Where("id = ?", ideaId).Where("event_id = ?", eventId).First(&updateIdea)
 	if result.Error != nil {
@@ -132,4 +132,14 @@ func (r *idea) UpdateIdeaLikes(ctx context.Context, eventId string, ideaId strin
 		return nil, result.Error
 	}
 	return updateIdea, nil
+}
+
+func (r *idea) Delete(ctx context.Context, eventId, ideaId string) error {
+	result := r.db.WithContext(ctx).Where("id = ?", ideaId).Where("event_id = ?", eventId).Delete(&model.Idea{})
+	if result.Error != nil {
+		r.logger.Error("failed to delete idea", log.Ferror(result.Error))
+		return result.Error
+	}
+
+	return nil
 }
