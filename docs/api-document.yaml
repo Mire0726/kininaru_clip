@@ -375,6 +375,8 @@ components:
         createdBy:
           type: "string"
           format: "uuid"
+        createdByName:
+          type: "string"
         tag:
           type: "string"
         memo:

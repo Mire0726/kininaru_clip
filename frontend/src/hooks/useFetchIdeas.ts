@@ -5,7 +5,7 @@ interface IdeaResponse {
   id: string;
   title: string;
   url: string;
-  createdBy: string;
+  created_by: string;
   tag: IdeaTag;
   eventId: string;
   likes: number;

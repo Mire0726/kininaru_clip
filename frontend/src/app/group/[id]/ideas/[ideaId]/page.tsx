@@ -79,7 +79,7 @@ export default function IdeaList({ params }: Props) {
           {idea?.title}
         </Heading>
         <Text fontSize="sm" color="gray.600" mt={1}>
-          {idea?.created_by}
+          {idea?.created_by_name}
         </Text>
 
         <Divider my={4} />

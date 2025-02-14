@@ -6,6 +6,7 @@ interface FetchIdeaResponse {
   title: string;
   url: string;
   created_by: string;
+  created_by_name: string;
   tag: string;
   event_id: string;
   likes: number;
