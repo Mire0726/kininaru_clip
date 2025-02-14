@@ -35,3 +35,10 @@ type GetIdeasReponse struct {
 	Hotel      []*Idea `json:"hotel"`
 	Other      []*Idea `json:"other"`
 }
+
+type UpdateIdeaInput struct {
+	Title   *string `json:"title,omitempty"`
+	Url     *string `json:"url,omitempty"`
+	Summary *string `json:"summary,omitempty"`
+	Memo    *string `json:"memo,omitempty"`
+}

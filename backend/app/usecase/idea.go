@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/infrastructure/datastore"
 
@@ -13,7 +14,8 @@ type IdeaUsecase interface {
 	Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error)
 	GetIdea(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
-	UpdateIdeaLikes(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
+	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
+	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
 }
 
 type ideaUC struct {
@@ -47,7 +49,16 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 	return idea, nil
 }
 
-func (u *ideaUC) GetIdea(ctx context.Context, eventId string, ideaId string) (*model.Idea, error) {
+func (u *ideaUC) Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error) {
+	idea, err := u.data.ReadWriteStore().Idea().Update(ctx, eventID, ideaID, input)
+	if err != nil {
+		u.log.Error("failed to update idea")
+		return nil, err
+	}
+	return idea, nil
+}
+
+func (u *ideaUC) GetIdea(ctx context.Context, eventId, ideaId string) (*model.Idea, error) {
 	idea, err := u.data.ReadWriteStore().Idea().GetIdea(ctx, eventId, ideaId)
 	if err != nil {
 		u.log.Error("failed to get an idea")

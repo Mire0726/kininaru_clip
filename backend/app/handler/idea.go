@@ -1,9 +1,10 @@
 package handler
 
 import (
+	"net/http"
+
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/pkg/log"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -55,6 +56,25 @@ func (h *Handler) GetIdeas(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
+func (h *Handler) UpdateIdea(c echo.Context) error {
+	ctx := c.Request().Context()
+	eventId := c.Param("eventId")
+	ideaId := c.Param("ideaId")
+	req := model.UpdateIdeaInput{}
+
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+
+	res, err := h.ideaUC.Update(ctx, eventId, ideaId, req)
+	if err != nil {
+		log.Error("failed to update idea")
+		return err
+	}
+
+	return c.JSON(http.StatusOK, res)
+}
+
 func (h *Handler) UpdateIdeaLikes(c echo.Context) error {
 	ctx := c.Request().Context()
 	eventId := c.Param("eventId")
@@ -67,5 +87,4 @@ func (h *Handler) UpdateIdeaLikes(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, res)
-
 }
