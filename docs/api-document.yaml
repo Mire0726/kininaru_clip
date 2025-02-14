@@ -208,6 +208,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ideaResponse"
+    put:
+      tags:
+        - "ideas"
+      summary: "Update idea"
+      operationId: "updateIdea"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ideaUpdateRequest"
+      responses:
+        "200":
+          description: "Get an idea"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ideaResponse"
 
   /events/{eventId}/ideas/{ideaId}/likes:
     put:
@@ -321,6 +350,17 @@ components:
         - "url"
         - "createdBy"
         - "tag"
+    ideaUpdateRequest:
+      type: "object"
+      properties:
+        title:
+          type: "string"
+        url:
+          type: "string"
+        summary:
+          type: "string"
+        memo:
+          type: "string"
 
     ideaResponse:
       type: "object"
