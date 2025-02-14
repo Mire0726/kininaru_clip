@@ -12,7 +12,7 @@ import (
 
 type IdeaUsecase interface {
 	Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error)
-	GetIdea(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
+	GetIdea(ctx context.Context, eventId string, ideaId string) (*model.GetIdeaResponse, error)
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
@@ -58,14 +58,33 @@ func (u *ideaUC) Update(ctx context.Context, eventID, ideaID string, input model
 	return idea, nil
 }
 
-func (u *ideaUC) GetIdea(ctx context.Context, eventId, ideaId string) (*model.Idea, error) {
+func (u *ideaUC) GetIdea(ctx context.Context, eventId, ideaId string) (*model.GetIdeaResponse, error) {
 	idea, err := u.data.ReadWriteStore().Idea().GetIdea(ctx, eventId, ideaId)
 	if err != nil {
 		u.log.Error("failed to get an idea")
 		return nil, err
 	}
 
-	return idea, nil
+	user, err := u.data.ReadWriteStore().User().Get(ctx, eventId, idea.CreatedBy)
+	if err != nil {
+		u.log.Error("failed to get user")
+		return nil, err
+	}
+
+	res := &model.GetIdeaResponse{
+		ID:            idea.ID,
+		Title:         idea.Title,
+		Url:           idea.Url,
+		CreatedBy:     idea.CreatedBy,
+		CreatesByName: user.Name,
+		Tag:           idea.Tag,
+		EventID:       idea.EventID,
+		Likes:         idea.Likes,
+		Summary:       idea.Summary,
+		Memo:          idea.Memo,
+	}
+
+	return res, nil
 }
 
 func (u *ideaUC) GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error) {

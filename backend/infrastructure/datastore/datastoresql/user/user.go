@@ -49,10 +49,21 @@ func (r *user) Exist(ctx context.Context, eventID, userName string) (bool, error
 
 func (r *user) GetUsers(ctx context.Context, eventID string) ([]*model.User, error) {
 	var users []*model.User
-	result := r.db.WithContext(ctx).Where("event_id=?",eventID).Find(&users)
+	result := r.db.WithContext(ctx).Where("event_id=?", eventID).Find(&users)
 	if result.Error != nil {
 		r.logger.Logger.Error("failed to get users", log.Ferror(result.Error))
 		return nil, result.Error
 	}
 	return users, nil
+}
+
+func (r *user) Get(ctx context.Context, evenID, userID string) (*model.User, error) {
+	var user *model.User
+	result := r.db.WithContext(ctx).Where("id = ?", userID).Where("event_id = ?", evenID).First(&user)
+	if result.Error != nil {
+		r.logger.Logger.Error("failed to get user", log.Ferror(result.Error))
+		return nil, result.Error
+	}
+
+	return user, nil
 }
