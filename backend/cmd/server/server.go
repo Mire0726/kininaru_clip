@@ -43,6 +43,7 @@ func Serve(addr string) {
 	e.POST("/events/:eventId/ideas", handlerCmd.CreateIdea)
 	e.GET("/events/:eventId/users", handlerCmd.GetUsers)
 	e.GET("/events/:eventId/ideas", handlerCmd.GetIdeas)
+	e.PUT("events/:eventId/ideas/:ideaId/likes", handlerCmd.UpdateIdeaLikes)
 	e.GET("/events/:eventId/ideas/:ideaId", handlerCmd.GetIdea)
 	e.GET("/events/:eventId", handlerCmd.GetEvent)
 

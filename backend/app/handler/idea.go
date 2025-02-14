@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/pkg/log"
 	"net/http"
@@ -29,7 +28,6 @@ func (h *Handler) CreateIdea(c echo.Context) error {
 }
 
 func (h *Handler) GetIdea(c echo.Context) error {
-	fmt.Println("before get ideas")
 	ctx := c.Request().Context()
 	eventId := c.Param("eventId")
 	ideaId := c.Param("ideaId")
@@ -44,7 +42,6 @@ func (h *Handler) GetIdea(c echo.Context) error {
 }
 
 func (h *Handler) GetIdeas(c echo.Context) error {
-	fmt.Println("before get ideas")
 	ctx := c.Request().Context()
 	id := c.Param("eventId")
 
@@ -56,4 +53,19 @@ func (h *Handler) GetIdeas(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) UpdateIdeaLikes(c echo.Context) error {
+	ctx := c.Request().Context()
+	eventId := c.Param("eventId")
+	ideaId := c.Param("ideaId")
+
+	res, err := h.ideaUC.UpdateIdeaLikes(ctx, eventId, ideaId)
+	if err != nil {
+		log.Error("failed to update idea likes")
+		return err
+	}
+
+	return c.JSON(http.StatusOK, res)
+
 }
