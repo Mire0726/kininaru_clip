@@ -1,11 +1,19 @@
 "use client";
 import { use } from "react";
 import { useState } from "react";
-import { Button, Flex, Text, VStack, Icon } from "@chakra-ui/react";
-import { FaUtensils, FaHotel, FaCamera, FaShoppingBag } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button, Flex, Text, VStack, Icon, HStack } from "@chakra-ui/react";
+import {
+  FaUtensils,
+  FaHotel,
+  FaCamera,
+  FaShoppingBag,
+  FaHeart,
+} from "react-icons/fa";
 import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
 import { useFetchEvent } from "@/hooks/useFetchEvent";
+import { usePostLike } from "../../../hooks/usePostLike";
 import { AddKinaruModal } from "./modal";
 import Header from "../../../components/header";
 
@@ -21,7 +29,9 @@ interface Props {
 export default function IdeaList({ params }: Props) {
   const resolvedParams = use(params);
   const eventId = resolvedParams.id;
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { mutate: postLike } = usePostLike();
   const { fetchIdeas: ideas } = useFetchIdeas(eventId);
   const { fetchUsers: users } = useFetchUsers(eventId);
   const { fetchEvent: event } = useFetchEvent(eventId);
@@ -29,6 +39,22 @@ export default function IdeaList({ params }: Props) {
   const locationIdeas = ideas?.location || [];
   const restaurantIdeas = ideas?.restaurant || [];
   const otherIdeas = ideas?.other || [];
+  const handleLike = async (eventId: string, ideaId: string) => {
+    postLike(
+      { eventId, ideaId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["ideas", eventId],
+          });
+        },
+        onError: () => {
+          console.error("いいねの送信に失敗しました");
+
+        },
+      }
+    );
+  };
 
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
@@ -79,14 +105,26 @@ export default function IdeaList({ params }: Props) {
               <Flex direction="column" gap={2}>
                 {label === "飲食店" &&
                   restaurantIdeas.map((idea) => (
-                    <Text
-                      key={idea.id}
-                      fontSize="sm"
-                      color="gray.700"
-                      textAlign="right"
-                    >
-                      {idea.title}
-                    </Text>
+                    <HStack>
+                      <Text
+                        key={idea.id}
+                        fontSize="sm"
+                        color="gray.700"
+                        textAlign="right"
+                      >
+                        {idea.title}
+                      </Text>
+                      <Icon
+                        as={FaHeart}
+                        boxSize={4}
+                        color="red.400"
+                        cursor="pointer"
+                        onClick={() => handleLike(eventId, idea.id)}
+                      />
+                      <Text fontSize="sm" color="gray.700">
+                        {idea.likes ?? 0}
+                      </Text>
+                    </HStack>
                   ))}
                 {label === "ホテル" &&
                   hotelIdeas.map((idea) => (
@@ -108,6 +146,7 @@ export default function IdeaList({ params }: Props) {
                       textAlign="right"
                     >
                       {idea.title}
+                      {idea.likes ?? 0}
                     </Text>
                   ))}
                 {label === "その他" &&
@@ -119,6 +158,7 @@ export default function IdeaList({ params }: Props) {
                       textAlign="right"
                     >
                       {idea.title}
+                      {idea.likes ?? 0}
                     </Text>
                   ))}
               </Flex>
