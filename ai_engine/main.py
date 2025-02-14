@@ -1,8 +1,8 @@
-from fastapi import FastAPI
 import uvicorn
-from src.schema.summary import SummaryRequest
+from fastapi import FastAPI
+
+from src.schema.summary import SummaryRequest, SummaryResponse
 from src.services.summary import summarize_map_info
-import json
 
 app = FastAPI()
 
@@ -13,11 +13,10 @@ async def root():
 
 
 @app.post("/summaries")
-def construct_summary(request: SummaryRequest):
+def construct_summary(request: SummaryRequest) -> SummaryResponse:
     res = summarize_map_info(request.url)
-    res_json = json.loads(res)
 
-    return res_json
+    return res
 
 
 # if __name__ == "__main__":

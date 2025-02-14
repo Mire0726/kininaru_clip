@@ -1,14 +1,25 @@
-import sys
 import os
+import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
+import json
+import logging
 
 from dotenv import load_dotenv
-from src.maps.places import get_place_info_for_summary
+
 from src.llm.llm import LLM
+from src.maps.places import get_place_info_for_summary
+from src.schema.summary import SummaryResponse
 
 load_dotenv()
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(filename)s:%(lineno)d - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 
 def summarize_map_info(url: str, debug: bool = False) -> str:
@@ -42,11 +53,12 @@ def summarize_map_info(url: str, debug: bool = False) -> str:
     client.set_prompt(prompt)
 
     if debug:
-        print(client.prompt)
+        logger.debug(client.prompt)
 
-    res, _, _ = client.get_response()
+    res, _, _ = client.get_response(response_format=SummaryResponse)
+    res_json = json.loads(res)
 
-    return res
+    return res_json
 
 
 if __name__ == "__main__":
