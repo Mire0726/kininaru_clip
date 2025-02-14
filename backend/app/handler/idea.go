@@ -97,8 +97,12 @@ func (h *Handler) DeleteIdea(c echo.Context) error {
 	err := h.ideaUC.Delete(ctx, eventId, ideaId)
 	if err != nil {
 		log.Error("failed to delete idea")
-		return err
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "internal server error",
+		})
 	}
 
-	return c.JSON(http.StatusOK, nil)
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Idea deleted successfully",
+	})
 }

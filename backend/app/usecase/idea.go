@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/infrastructure/datastore"
@@ -16,7 +17,7 @@ type IdeaUsecase interface {
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
-	Delete(ctx context.Context, eventId, ideaId string) error 
+	Delete(ctx context.Context, eventId, ideaId string) error
 }
 
 type ideaUC struct {
@@ -108,9 +109,20 @@ func (u *ideaUC) UpdateIdeaLikes(ctx context.Context, eventId string, ideaId str
 }
 
 func (u *ideaUC) Delete(ctx context.Context, eventId, ideaId string) error {
+	exist, err := u.data.ReadWriteStore().Idea().Exist(ctx, eventId, ideaId)
+	if err != nil {
+		u.log.Error("failed to check idea exist")
+
+		return err
+	}
+	if !exist {
+		u.log.Error("idea does not exist")
+		return err
+	}
 	if err := u.data.ReadWriteStore().Idea().Delete(ctx, eventId, ideaId); err != nil {
 		u.log.Error("failed to delete idea")
-		return err
+
+		return errors.New("failed to delete idea")
 	}
 	return nil
 }

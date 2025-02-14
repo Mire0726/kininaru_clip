@@ -137,9 +137,23 @@ func (r *idea) UpdateIdeaLikes(ctx context.Context, eventId string, ideaId strin
 func (r *idea) Delete(ctx context.Context, eventId, ideaId string) error {
 	result := r.db.WithContext(ctx).Where("id = ?", ideaId).Where("event_id = ?", eventId).Delete(&model.Idea{})
 	if result.Error != nil {
-		r.logger.Error("failed to delete idea", log.Ferror(result.Error))
+		r.logger.Error("failed to delete idea in datastore", log.Ferror(result.Error))
 		return result.Error
 	}
 
 	return nil
+}
+
+func (r *idea) Exist(ctx context.Context, eventId, ideaId string) (bool, error) {
+	var count int64
+	result := r.db.WithContext(ctx).Model(&model.Idea{}).
+		Where("id = ?", ideaId).
+		Where("event_id = ?", eventId).
+		Count(&count)
+	if result.Error != nil {
+		r.logger.Error("failed to check idea existence", log.Ferror(result.Error))
+		return false, result.Error
+	}
+
+	return count > 0, nil
 }
