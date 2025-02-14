@@ -23,7 +23,7 @@ import {
 import { useFetchIdeas } from "../../../hooks/useFetchIdeas";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
 import { useFetchEvent } from "@/hooks/useFetchEvent";
-import { usePostLike } from "../../../hooks/usePostLike";
+import { useUpdateLike } from "../../../hooks/useUpdateLike";
 import { AddKinaruModal } from "./modal";
 import Header from "../../../components/header";
 
@@ -42,7 +42,7 @@ export default function IdeaList({ params }: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: postLike } = usePostLike();
+  const { mutate: updateLike } = useUpdateLike();
   const { fetchIdeas: ideas } = useFetchIdeas(eventId);
   const { fetchUsers: users } = useFetchUsers(eventId);
   const { fetchEvent: event } = useFetchEvent(eventId);
@@ -51,7 +51,7 @@ export default function IdeaList({ params }: Props) {
   const restaurantIdeas = ideas?.restaurant || [];
   const otherIdeas = ideas?.other || [];
   const handleLike = async (eventId: string, ideaId: string) => {
-    postLike(
+    updateLike(
       { eventId, ideaId },
       {
         onSuccess: () => {
