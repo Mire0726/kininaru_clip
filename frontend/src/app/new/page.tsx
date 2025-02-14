@@ -6,6 +6,9 @@ import {
   FormControl,
   FormLabel,
   Text,
+  Tag,
+  TagLabel,
+  TagCloseButton,
   Flex,
   Stack,
   useBreakpointValue,
@@ -25,10 +28,21 @@ export default function NewGroup() {
 
   const [title, setTitle] = useState("");
   const [memberName, setMemberName] = useState("");
+  const [members, setMembers] = useState<string[]>([]);
   const { mutate: createEvent, data, error } = usePostEvent();
+  const handleAddMember = () => {
+    if (memberName.trim() === "") return;
+    setMembers([...members, memberName]);
+    setMemberName("");
+  };
+
+  // メンバー削除処理
+  const handleRemoveMember = (name: string) => {
+    setMembers(members.filter((member) => member !== name));
+  };
 
   const handleCreateEvent = () => {
-    if (!title || !memberName) {
+    if (!title || members.length === 0) {
       alert("タイトルとメンバー名を入力してください");
       return;
     }
@@ -36,17 +50,14 @@ export default function NewGroup() {
     createEvent(
       {
         title,
-        users: [
-          {
-            name: memberName,
-          },
-        ],
+        users: members.map((name) => ({ name })),
       },
       {
         onSuccess: (data) => {
           router.push(data.url);
         },
-        onError: (error) => {
+        onError: () => {
+          console.log(members.map((name) => ({ name })))
           toast({
             title: "エラー",
             description: "グループの作成に失敗しました",
@@ -58,7 +69,6 @@ export default function NewGroup() {
       }
     );
   };
-
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
       <Header />
@@ -81,14 +91,33 @@ export default function NewGroup() {
 
           <FormControl>
             <FormLabel fontSize="lg">メンバー名</FormLabel>
-            <Input
-              placeholder="すみれ"
-              size={inputSize}
-              bg="white"
-              value={memberName}
-              onChange={(e) => setMemberName(e.target.value)}
-            />
+            <Flex>
+              <Input
+                placeholder="すみれ"
+                size={inputSize}
+                bg="white"
+                value={memberName}
+                onChange={(e) => setMemberName(e.target.value)}
+              />
+              <Button
+                ml={2}
+                size="md"
+                colorScheme="blue"
+                onClick={handleAddMember}
+              >
+                追加
+              </Button>
+            </Flex>
           </FormControl>
+
+          <Flex wrap="wrap" gap={2}>
+            {members.map((name) => (
+              <Tag key={name} size="lg" colorScheme="blue">
+                <TagLabel>{name}</TagLabel>
+                <TagCloseButton onClick={() => handleRemoveMember(name)} />
+              </Tag>
+            ))}
+          </Flex>
 
           <Button
             mt={6}
