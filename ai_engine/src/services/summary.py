@@ -45,7 +45,7 @@ def summarize_map_info(url: str, debug: bool = False) -> str:
 
             この文章をsummaryをキーとするjsonで生成してください。
             OUTPUT FORMAT自体は、全体で文章にしてください。
-            また、評価は星を使って視覚的にもわかりやすいようにしてください。
+            また、評価は「白黒」の星を使って視覚的にもわかりやすいようにしてください。
             """
 
     client = LLM(base="openai", model="gpt-4o-mini")
