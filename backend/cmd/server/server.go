@@ -32,8 +32,10 @@ func Serve(addr string) {
 		logger.Error("Failed to connect db", log.Ferror(err))
 	}
 
+	const pythonServerBaseURL = "http://ai-engine:8000"
+
 	data := datastoresql.NewStore(db, logger)
-	handlerCmd := handler.NewHandler(data, logger)
+	handlerCmd := handler.NewHandler(data, logger, pythonServerBaseURL)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Welcome to unibox")
@@ -46,6 +48,7 @@ func Serve(addr string) {
 	e.PUT("events/:eventId/ideas/:ideaId/likes", handlerCmd.UpdateIdeaLikes)
 	e.GET("/events/:eventId/ideas/:ideaId", handlerCmd.GetIdea)
 	e.PUT("/events/:eventId/ideas/:ideaId", handlerCmd.UpdateIdea)
+	e.DELETE("/events/:eventId/ideas/:ideaId", handlerCmd.DeleteIdea)
 	e.GET("/events/:eventId", handlerCmd.GetEvent)
 
 	/* ===== サーバの起動 ===== */

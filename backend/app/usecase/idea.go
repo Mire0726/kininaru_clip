@@ -2,9 +2,11 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/infrastructure/datastore"
+	"kininaru_clip/backend/infrastructure/pyclient"
 
 	"kininaru_clip/backend/pkg/log"
 	"kininaru_clip/backend/pkg/uid"
@@ -16,21 +18,30 @@ type IdeaUsecase interface {
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
+	Delete(ctx context.Context, eventId, ideaId string) error
 }
 
 type ideaUC struct {
-	data datastore.Data
-	log  *log.Logger
+	data     datastore.Data
+	log      *log.Logger
+	pyClient pyclient.Client
 }
 
-func NewIdeaUsecase(data datastore.Data, log *log.Logger) IdeaUsecase {
+func NewIdeaUsecase(data datastore.Data, log *log.Logger, baseURL string) IdeaUsecase {
 	return &ideaUC{
-		data: data,
-		log:  log,
+		data:     data,
+		log:      log,
+		pyClient: pyclient.NewClient(baseURL),
 	}
 }
 
 func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error) {
+	summary, err := u.pyClient.GetSummary(ctx, input.Url)
+	if err != nil {
+		u.log.Error("failed to get summary from python server")
+		return nil, err
+	}
+
 	idea := &model.Idea{
 		ID:        uid.NewGenerator().NewULID(),
 		Title:     input.Title,
@@ -38,9 +49,10 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 		CreatedBy: input.CreatedBy,
 		Tag:       input.Tag,
 		EventID:   eventID,
+		Summary:   &summary,
 	}
 
-	if err := u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
+	if err = u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
 		u.log.Error("failed to create idea")
 
 		return nil, err
@@ -104,4 +116,23 @@ func (u *ideaUC) UpdateIdeaLikes(ctx context.Context, eventId string, ideaId str
 	}
 
 	return idea, nil
+}
+
+func (u *ideaUC) Delete(ctx context.Context, eventId, ideaId string) error {
+	exist, err := u.data.ReadWriteStore().Idea().Exist(ctx, eventId, ideaId)
+	if err != nil {
+		u.log.Error("failed to check idea exist")
+
+		return err
+	}
+	if !exist {
+		u.log.Error("idea does not exist")
+		return err
+	}
+	if err := u.data.ReadWriteStore().Idea().Delete(ctx, eventId, ideaId); err != nil {
+		u.log.Error("failed to delete idea")
+
+		return errors.New("failed to delete idea")
+	}
+	return nil
 }

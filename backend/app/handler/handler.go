@@ -12,10 +12,10 @@ type Handler struct {
 	ideaUC  usecase.IdeaUsecase
 }
 
-func NewHandler(data datastore.Data, log *log.Logger) *Handler {
+func NewHandler(data datastore.Data, log *log.Logger, baseURL string) *Handler {
 	return &Handler{
 		eventUC: usecase.NewEventUsecase(data, log),
 		userUC:  usecase.NewUserUsecase(data, log),
-		ideaUC:  usecase.NewIdeaUsecase(data, log),
+		ideaUC:  usecase.NewIdeaUsecase(data, log, baseURL),
 	}
 }

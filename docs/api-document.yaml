@@ -237,6 +237,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ideaResponse"
+    delete:
+      tags:
+        - "ideas"
+      summary: "Delete an idea"
+      operationId: "deleteIdea"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Delete an idea"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Idea deleted successfully"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "エラーメッセージ"
 
   /events/{eventId}/ideas/{ideaId}/likes:
     put:
@@ -339,7 +376,7 @@ components:
           type: "string"
         url:
           type: "string"
-        createdBy:
+        created_by:
           type: "string"
         tag:
           type: "string"
@@ -348,7 +385,7 @@ components:
       required:
         - "title"
         - "url"
-        - "createdBy"
+        - "created_by"
         - "tag"
     ideaUpdateRequest:
       type: "object"
