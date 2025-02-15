@@ -48,6 +48,7 @@ func Serve(addr string) {
 	e.PUT("events/:eventId/ideas/:ideaId/likes", handlerCmd.UpdateIdeaLikes)
 	e.GET("/events/:eventId/ideas/:ideaId", handlerCmd.GetIdea)
 	e.PUT("/events/:eventId/ideas/:ideaId", handlerCmd.UpdateIdea)
+	e.DELETE("/events/:eventId/ideas/:ideaId", handlerCmd.DeleteIdea)
 	e.GET("/events/:eventId", handlerCmd.GetEvent)
 
 	/* ===== サーバの起動 ===== */
