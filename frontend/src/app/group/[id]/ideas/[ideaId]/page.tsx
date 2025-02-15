@@ -167,7 +167,15 @@ export default function IdeaList({ params }: Props) {
           {idea?.created_by_name}
         </Text>
         <Divider my={4} />
-
+        <Flex direction="column" gap={2}>
+          <Text fontSize="md" fontWeight="bold">
+            勝手に要約✨:
+          </Text>
+          <Text whiteSpace="pre-wrap" wordBreak="break-word">
+            {idea?.summary}
+          </Text>
+        </Flex>
+        <Divider my={4} />
         <Flex direction="column" gap={2}>
           <Text fontSize="md" fontWeight="bold">
             memo:
@@ -186,7 +194,7 @@ export default function IdeaList({ params }: Props) {
           )}
         </Flex>
 
-        <Box h="40px" borderBottom="1px solid #46B2FF" />
+        <Divider my={4} />
 
         <Flex direction="column" gap={2} mt={4}>
           <Text fontSize="md" fontWeight="bold">
