@@ -82,7 +82,8 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
     setSelectedTab(0);
   };
   const isTitleEmpty = form.title.trim() === "";
-  const { mutate: createIdea, data, error } = usePostIdea();
+  const { mutate: createIdea, data, error, isPending } = usePostIdea();
+
   const hasUsers =
     fetchUsers && fetchUsers.users && fetchUsers.users.length > 0;
   const handleTabChange = (index: number) => {
@@ -224,7 +225,8 @@ export const AddKinaruModal: React.FC<AddKinaruModalProps> = ({
             <Button
               colorScheme="blue"
               onClick={handleSubmit}
-              isDisabled={isTitleEmpty}
+              isDisabled={isTitleEmpty || isPending}
+              isLoading={isPending}
             >
               登録
             </Button>
