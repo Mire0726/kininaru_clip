@@ -172,7 +172,7 @@ const IdeaCard = ({ idea, eventId, ideaId }: IdeaCardProps) => {
       </Flex>
 
       <Text fontSize="sm" color="gray.600" mt={1}>
-        {idea?.created_by_name}
+        登録者：{idea?.created_by_name}
       </Text>
       <Divider my={4} />
       <Flex direction="column" gap={2}>
