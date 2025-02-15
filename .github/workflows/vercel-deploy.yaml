@@ -15,9 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     environment:
-      name: development
-      url: ${{ steps.vercel-deploy.outputs.url }}
-
+      name: Development
     steps:
       - uses: actions/checkout@v4
 
