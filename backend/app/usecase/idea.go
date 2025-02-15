@@ -19,6 +19,7 @@ type IdeaUsecase interface {
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
 	Delete(ctx context.Context, eventId, ideaId string) error
+	GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error)
 }
 
 type ideaUC struct {
@@ -36,7 +37,7 @@ func NewIdeaUsecase(data datastore.Data, log *log.Logger, baseURL string) IdeaUs
 }
 
 func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error) {
-	summary, err := u.pyClient.GetSummary(ctx, input.Url)
+	summary, err := u.pyClient.GetSummary(ctx, *input.Url)
 	if err != nil {
 		u.log.Error("failed to get summary from python server")
 		return nil, err
@@ -45,7 +46,7 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 	idea := &model.Idea{
 		ID:        uid.NewGenerator().NewULID(),
 		Title:     input.Title,
-		Url:       input.Url,
+		Url:       *input.Url,
 		CreatedBy: input.CreatedBy,
 		Tag:       input.Tag,
 		EventID:   eventID,
@@ -135,4 +136,14 @@ func (u *ideaUC) Delete(ctx context.Context, eventId, ideaId string) error {
 		return errors.New("failed to delete idea")
 	}
 	return nil
+}
+
+func (u *ideaUC) GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error) {
+	res, err := u.data.ReadWriteStore().Idea().GetRecommendItems(ctx, ideaId)
+	if err != nil {
+		u.log.Error("failed to get recommend items")
+		return nil, err
+	}
+
+	return res, nil
 }

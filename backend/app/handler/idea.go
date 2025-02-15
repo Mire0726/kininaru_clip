@@ -106,3 +106,17 @@ func (h *Handler) DeleteIdea(c echo.Context) error {
 		"message": "Idea deleted successfully",
 	})
 }
+
+func (h *Handler) GetRecommendItems(c echo.Context) error {
+	ctx := c.Request().Context()
+	ideaId := c.Param("ideaId")
+
+	res, err := h.ideaUC.GetRecommendItems(ctx, ideaId)
+	if err != nil {
+		log.Error("failed to get recommend items")
+
+		return err
+	}
+
+	return c.JSON(http.StatusOK, res)
+}

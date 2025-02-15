@@ -157,3 +157,15 @@ func (r *idea) Exist(ctx context.Context, eventId, ideaId string) (bool, error) 
 
 	return count > 0, nil
 }
+
+func (r *idea) GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error) {
+	var recommendItems []*model.Recommend
+	fmt.Println("befor get rec item")
+	result := r.db.WithContext(ctx).Where("idea_id = ?", ideaId).Find(&recommendItems)
+	if result.Error != nil {
+		r.logger.Logger.Error("failed to get recommend items", log.Ferror(result.Error))
+		return nil, result.Error
+	}
+
+	return &model.RecommendResponse{Recommends: recommendItems}, nil
+}
