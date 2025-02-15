@@ -36,12 +36,6 @@ func NewIdeaUsecase(data datastore.Data, log *log.Logger, baseURL string) IdeaUs
 }
 
 func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error) {
-	summary, err := u.pyClient.GetSummary(ctx, input.Url)
-	if err != nil {
-		u.log.Error("failed to get summary from python server")
-		return nil, err
-	}
-
 	idea := &model.Idea{
 		ID:        uid.NewGenerator().NewULID(),
 		Title:     input.Title,
@@ -49,7 +43,13 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 		CreatedBy: input.CreatedBy,
 		Tag:       input.Tag,
 		EventID:   eventID,
-		Summary:   &summary,
+	}
+
+	summary, err := u.pyClient.GetSummary(ctx, input.Url)
+	if err == nil {
+		idea.Summary = &summary
+	} else {
+		u.log.Error("failed to get summary from python server")
 	}
 
 	if err = u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
