@@ -40,6 +40,9 @@ func Serve(addr string) {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Welcome to unibox")
 	})
+	e.GET("/health", func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
+	})
 	e.POST("/events/:eventId/users", handlerCmd.CreateUser)
 	e.POST("/events", handlerCmd.CreateEvent)
 	e.POST("/events/:eventId/ideas", handlerCmd.CreateIdea)
