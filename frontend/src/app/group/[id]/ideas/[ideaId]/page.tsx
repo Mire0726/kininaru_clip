@@ -5,6 +5,7 @@ import { useFetchUsers } from "@/hooks/useFetchUsers";
 import { useFetchEvent } from "@/hooks/useFetchEvent";
 import { useFetchIdea } from "@/hooks/useFetchIdea";
 import { useUpdateIdea } from "@/hooks/useUpdateIdea";
+import { useDeleteIdea } from "@/hooks/useDeleteIdea";
 import { SubHeader } from "@/components/SubHeader";
 import Header from "@/components/header";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,6 +27,7 @@ import {
   FaHotel,
   FaMapMarkerAlt,
   FaStar,
+  FaTrash,
   FaEdit,
 } from "react-icons/fa";
 import { useBreakpointValue } from "@chakra-ui/react";
@@ -45,6 +47,7 @@ export default function IdeaList({ params }: Props) {
   const { fetchEvent: event } = useFetchEvent(eventId);
   const { fetchIdea: idea } = useFetchIdea(eventId, ideaId);
   const { mutate } = useUpdateIdea();
+  const { mutate: deleteIdea } = useDeleteIdea();
   const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -57,6 +60,34 @@ export default function IdeaList({ params }: Props) {
     setEditedTitle(idea?.title || "");
     setEditedMemo(idea?.memo || "");
     setEditedUrl(idea?.url || "");
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteIdea(
+        { eventId, ideaId },
+        {
+          onSuccess: () => {
+            toast({
+              title: "削除成功",
+              status: "success",
+              duration: 3000,
+            });
+            router.push(`/group/${eventId}`);
+          },
+          onError: (error) => {
+            toast({
+              title: "削除エラー",
+              description: error.message,
+              status: "error",
+              duration: 3000,
+            });
+          },
+        }
+      );
+    } catch (error) {
+      console.error("削除エラー:", error);
+    }
   };
 
   const handleUpdate = () => {
@@ -135,16 +166,26 @@ export default function IdeaList({ params }: Props) {
         mx="auto"
         position="relative"
       >
-        <Icon
-          as={FaEdit}
-          cursor="pointer"
-          onClick={() => setIsEditing(true)}
-          position="absolute"
-          top={4}
-          right={4}
-          color="#46B2FF"
-          boxSize={5}
-        />
+        <Flex position="absolute" top={4} right={4} gap={4} align="center">
+          <Icon
+            as={FaEdit}
+            cursor="pointer"
+            onClick={() => setIsEditing(true)}
+            color="#46B2FF"
+            boxSize={5}
+          />
+          <Icon
+            as={FaTrash}
+            cursor="pointer"
+            onClick={() => {
+              if (window.confirm("本当に削除しますか？")) {
+                handleDelete();
+              }
+            }}
+            color="red.300"
+            boxSize={5}
+          />
+        </Flex>
 
         <Flex align="center" gap={2} color="#46B2FF">
           <Icon as={getIconByTag(idea?.tag)} boxSize={6} />
