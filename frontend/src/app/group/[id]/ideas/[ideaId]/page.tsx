@@ -10,8 +10,12 @@ import { useDeleteIdea } from "@/hooks/useDeleteIdea";
 import { SubHeader } from "@/components/SubHeader";
 import Header from "@/components/header";
 import { useQueryClient } from "@tanstack/react-query";
+import { useFetchRecommend } from "@/hooks/useFetchRecommend";
 import { useToast } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
+import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
+import { FetchRecommendResponse } from "@/constants/type";
+
 import {
   Button,
   Flex,
@@ -34,6 +38,7 @@ import {
 import { useBreakpointValue } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import RecommendSection from "./recommendSection";
 
 interface Props {
   params: Promise<{ id: string; ideaId: string }>;
@@ -47,6 +52,12 @@ export default function IdeaList({ params }: Props) {
   const { fetchUsers: users } = useFetchUsers(eventId);
   const { fetchEvent: event } = useFetchEvent(eventId);
   const { fetchIdea: idea } = useFetchIdea(eventId, ideaId);
+  const { fetchRecommend: recommends, isLoading } = useFetchRecommend(
+    eventId,
+    ideaId
+  );
+  console.log("recommend", recommends);
+
   const { mutate } = useUpdateIdea();
   const { mutate: deleteIdea } = useDeleteIdea();
   const router = useRouter();
@@ -54,6 +65,7 @@ export default function IdeaList({ params }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(idea?.title || "");
   const [editedMemo, setEditedMemo] = useState(idea?.memo || "");
+  const [showRecommend, setShowRecommend] = useState(false);
   useEffect(() => {
     if (idea) {
       setEditedTitle(idea.title || "");
@@ -276,9 +288,15 @@ export default function IdeaList({ params }: Props) {
           color="#46B2FF"
           _hover={{ bg: "#46B2FF", color: "white" }}
           borderRadius="md"
+          onClick={() => setShowRecommend(!showRecommend)}
+          leftIcon={<Icon as={showRecommend ? FaChevronUp : FaChevronDown} />}
+          isLoading={isLoading}
         >
-          AI提案機能を利用する
+          AI提案機能を{showRecommend ? "閉じる" : "利用する"}
         </Button>
+        {showRecommend && (
+          <RecommendSection recommends={recommends} isLoading={isLoading} />
+        )}
       </Box>
     </Flex>
   );
