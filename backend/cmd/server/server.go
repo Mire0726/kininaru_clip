@@ -32,8 +32,10 @@ func Serve(addr string) {
 		logger.Error("Failed to connect db", log.Ferror(err))
 	}
 
+	const pythonServerBaseURL = "http://ai-engine:8000"
+
 	data := datastoresql.NewStore(db, logger)
-	handlerCmd := handler.NewHandler(data, logger)
+	handlerCmd := handler.NewHandler(data, logger, pythonServerBaseURL)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Welcome to unibox")
