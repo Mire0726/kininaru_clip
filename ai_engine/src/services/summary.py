@@ -28,7 +28,7 @@ def summarize_map_info(url: str, debug: bool = False) -> str:
     prompt = """
             ### 指示
             INPUTの内容を見て、SITUATIONに合わせた、OUTPUT FORMATのようなまとめを作ってください。
-            
+
             ### SITUATION
             - 友達との旅行の行きたいリストの共有で、どんな店か簡単に理解するためのまとめ。
             - プライベートでの友達や家族との使用です。その状況を考慮して、カジュアルな感じでお願いします。
