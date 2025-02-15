@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from '../constants/config';
 
 interface IdeaRequest {
   title: string;
@@ -35,7 +34,7 @@ const postIdea = async (
   ideaData: IdeaRequest
 ): Promise<IdeaResponse> => {
   const response = await axios.post<IdeaResponse>(
-    `${BASE_URL}/events/${eventId}/ideas`,
+    `${API_CONFIG.BASE_URL}/events/${eventId}/ideas`,
     ideaData
   );
   return response.data;

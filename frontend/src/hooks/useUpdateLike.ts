@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from '../constants/config';
 
 interface LikeResponse {
   id: string;
@@ -27,7 +26,7 @@ const updateLike = async (
   ideaId: string
 ): Promise<LikeResponse> => {
   const response = await axios.put<LikeResponse>(
-    `${BASE_URL}/events/${eventId}/ideas/${ideaId}/likes`
+    `${API_CONFIG.BASE_URL}/events/${eventId}/ideas/${ideaId}/likes`
   );
   return response.data;
 };

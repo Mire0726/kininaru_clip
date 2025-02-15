@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from "../constants/config";
 
 interface FetchIdeaResponse {
   id: string;
@@ -18,7 +18,7 @@ const fetchIdea = async (
   eventId: string,
   ideaId: string
 ): Promise<FetchIdeaResponse> => {
-  const response = await fetch(`${BASE_URL}/events/${eventId}/ideas/${ideaId}`);
+  const response = await fetch(`${API_CONFIG.BASE_URL}/events/${eventId}/ideas/${ideaId}`);
   if (!response.ok) {
     throw new Error("アイデアの取得に失敗しました");
   }
@@ -26,9 +26,12 @@ const fetchIdea = async (
 };
 
 export const useFetchIdea = (eventId: string, ideaId: string) => {
-  const { data, isLoading } = useQuery<FetchIdeaResponse>({
+  const { data, isLoading } = useQuery({
     queryKey: ["idea", eventId, ideaId],
     queryFn: () => fetchIdea(eventId, ideaId),
+    staleTime: 0,
+    gcTime: 1000 * 60,
+    refetchOnMount: true,
   });
 
   return {

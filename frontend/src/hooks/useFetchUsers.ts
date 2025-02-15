@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from '../constants/config';
 
 interface UserResponse {
   id: string;
@@ -12,7 +12,7 @@ interface FetchUsersResponse {
 }
 
 const fetchUsers = async (eventId: string): Promise<FetchUsersResponse> => {
-  const response = await fetch(`${BASE_URL}/events/${eventId}/users`);
+  const response = await fetch(`${API_CONFIG.BASE_URL}/events/${eventId}/users`);
   if (!response.ok) {
     throw new Error("ユーザーの取得に失敗しました");
   }
