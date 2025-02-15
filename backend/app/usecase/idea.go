@@ -5,6 +5,7 @@ import (
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/infrastructure/datastore"
+	"kininaru_clip/backend/infrastructure/pyclient"
 
 	"kininaru_clip/backend/pkg/log"
 	"kininaru_clip/backend/pkg/uid"
@@ -19,18 +20,26 @@ type IdeaUsecase interface {
 }
 
 type ideaUC struct {
-	data datastore.Data
-	log  *log.Logger
+	data     datastore.Data
+	log      *log.Logger
+	pyClient pyclient.Client
 }
 
-func NewIdeaUsecase(data datastore.Data, log *log.Logger) IdeaUsecase {
+func NewIdeaUsecase(data datastore.Data, log *log.Logger, baseURL string) IdeaUsecase {
 	return &ideaUC{
-		data: data,
-		log:  log,
+		data:     data,
+		log:      log,
+		pyClient: pyclient.NewClient(baseURL),
 	}
 }
 
 func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error) {
+	summary, err := u.pyClient.GetSummary(ctx, input.Url)
+	if err != nil {
+		u.log.Error("failed to get summary from python server")
+		return nil, err
+	}
+
 	idea := &model.Idea{
 		ID:        uid.NewGenerator().NewULID(),
 		Title:     input.Title,
@@ -38,9 +47,10 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 		CreatedBy: input.CreatedBy,
 		Tag:       input.Tag,
 		EventID:   eventID,
+		Summary:   &summary,
 	}
 
-	if err := u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
+	if err = u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
 		u.log.Error("failed to create idea")
 
 		return nil, err
