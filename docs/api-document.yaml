@@ -325,6 +325,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/ideaResponse"
 
+  /events/{eventId}/ideas/{ideaId}/recommends:
+    get:
+      tags:
+        - "recommends"
+      summary: "Get recommend items"
+      operationId: "getRecommend"
+      parameters:
+        - name: "eventId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+        - name: "ideaId"
+          in: path
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get recommend items"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  recommends:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/recommendResponse"
+
 components:
   schemas:
     createEventInput:
@@ -473,3 +503,25 @@ components:
             $ref: "#/components/schemas/user"
       required:
         - "users"
+
+    recommendResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        name:
+          type: "string"
+        url:
+          type: "string"
+        idea_id:
+          type: "string"
+          format: "uuid"
+        content:
+          type: "string"
+      required:
+        - "id"
+        - "name"
+        - "url"
+        - "idea_id"
+        - "content"
