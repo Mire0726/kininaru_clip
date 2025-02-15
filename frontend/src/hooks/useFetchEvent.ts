@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from "../constants/config";
 
 interface FetchEventResponse {
   id: string;
@@ -7,7 +7,7 @@ interface FetchEventResponse {
   url: string;
 }
 const fetchEvent = async (eventId: string): Promise<FetchEventResponse> => {
-  const response = await fetch(`${BASE_URL}/events/${eventId}`);
+  const response = await fetch(`${API_CONFIG.BASE_URL}/events/${eventId}`);
   if (!response.ok) {
     throw new Error("イベントの取得に失敗しました");
   }

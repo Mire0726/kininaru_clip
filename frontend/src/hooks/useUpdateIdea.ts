@@ -1,6 +1,5 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from '../constants/config';
 
 interface UpdateIdeaParams {
   eventId: string;
@@ -31,7 +30,7 @@ const updateIdea = async (
   requestBody: UpdateIdeaRequest
 ): Promise<UpdateIdeaResponse> => {
   const response = await fetch(
-    `${BASE_URL}/events/${params.eventId}/ideas/${params.ideaId}`,
+    `${API_CONFIG.BASE_URL}/events/${params.eventId}/ideas/${params.ideaId}`,
     {
       method: "PUT",
       headers: {

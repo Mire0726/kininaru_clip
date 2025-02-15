@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-
-const BASE_URL = "http://localhost:8080";
+import { API_CONFIG } from '../constants/config'  
 
 interface UserRequest {
   name: string;
@@ -20,7 +19,7 @@ interface EventResponse {
 
 const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
   const response = await axios.post<EventResponse>(
-    `${BASE_URL}/events`,
+    `${API_CONFIG.BASE_URL}/events`,
     eventData
   );
   return response.data;
