@@ -9,7 +9,7 @@ import (
 )
 
 func NewDB() (*gorm.DB, error) {
-	dsn := "root:mysql@tcp(mysql:3306)/db?charset=utf8mb4&parseTime=true&loc=Local"
+	dsn := "admin:IzjzMYiQkhm7AFIKzkVE@tcp(database-kininaru-clip.c1wy2og8qxzi.ap-northeast-1.rds.amazonaws.com:3306)/db?charset=utf8mb4&parseTime=true&loc=Local"
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
