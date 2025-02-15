@@ -17,6 +17,7 @@ const eslintConfig = [
       "@typescript-eslint/no-empty-object-type": "warn",
       "react/no-unescaped-entities": "warn",
       "react-hooks/rules-of-hooks": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
 ];
