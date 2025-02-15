@@ -105,6 +105,13 @@ def nearby_simirary_search(url: str, rad: int = 1500) -> List[Dict]:
     return search_formatted_result
 
 
+def get_url_by_place_id(place_id: str) -> str:
+    gmaps_client: googlemaps.Client = googlemaps.Client(key=GOOGLEMAP_API_KEY)
+    search_result = gmaps_client.place(place_id=place_id, language="ja")
+
+    return search_result["result"]["url"]
+
+
 if __name__ == "__main__":
     url = "https://www.google.co.jp/maps/place/%E6%9C%AD%E5%B9%8C%E5%B8%82%E6%99%82%E8%A8%88%E5%8F%B0/@43.0628859,141.3509121,17z/data=!4m6!3m5!1s0x5f0b297627507247:0x1b9ba84a4b04cdeb!8m2!3d43.0625768!4d141.3534928!16s%2Fm%2F0263ys5?entry=ttu&g_ep=EgoyMDI1MDIxMC4wIKXMDSoASAFQAw%3D%3D"
     place_info = get_place_info_for_summary(url)

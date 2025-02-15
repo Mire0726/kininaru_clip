@@ -8,6 +8,7 @@ class recommendRequest(BaseModel):
 
 class recommendItem(BaseModel):
     name: str
+    url: str
     content: str
 
 
