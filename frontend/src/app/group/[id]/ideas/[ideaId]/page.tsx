@@ -51,12 +51,10 @@ export default function IdeaList({ params }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(idea?.title || "");
   const [editedMemo, setEditedMemo] = useState(idea?.memo || "");
-  const [editedUrl, setEditedUrl] = useState(idea?.url || "");
   useEffect(() => {
     if (idea) {
       setEditedTitle(idea.title || "");
       setEditedMemo(idea.memo || "");
-      setEditedUrl(idea.url || "");
     }
   }, [idea]);
 
@@ -65,7 +63,6 @@ export default function IdeaList({ params }: Props) {
     if (idea) {
       setEditedTitle(idea.title || "");
       setEditedMemo(idea.memo || "");
-      setEditedUrl(idea.url || "");
     }
   };
   const handleUpdate = () => {
@@ -77,7 +74,6 @@ export default function IdeaList({ params }: Props) {
         },
         requestBody: {
           title: editedTitle,
-          url: editedUrl,
           memo: editedMemo,
         },
       },
@@ -201,23 +197,15 @@ export default function IdeaList({ params }: Props) {
           <Text fontSize="md" fontWeight="bold">
             Google Maps URL：
           </Text>
-          {isEditing ? (
-            <Input
-              value={editedUrl}
-              onChange={(e) => setEditedUrl(e.target.value)}
-              wordBreak="break-all"
-            />
-          ) : (
-            <Link
-              href={idea?.url}
-              color="blue.500"
-              isExternal
-              wordBreak="break-all"
-              overflowWrap="break-word"
-            >
-              {idea?.url}
-            </Link>
-          )}
+          <Link
+            href={idea?.url}
+            color="blue.500"
+            isExternal
+            wordBreak="break-all"
+            overflowWrap="break-word"
+          >
+            {idea?.url}
+          </Link>
         </Flex>
 
         {isEditing && (
