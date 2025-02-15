@@ -1,8 +1,13 @@
+import json
 import os
-from typing import Tuple, List, Dict
-from urllib.parse import urlparse, unquote
-from dotenv import load_dotenv
+from typing import Dict, List, Tuple
+from urllib.parse import unquote, urlparse
+
 import googlemaps
+from dotenv import load_dotenv
+
+from src.llm.llm import LLM
+from src.schema.map import searchKyeword
 
 load_dotenv()
 
@@ -36,12 +41,9 @@ def googlemap_url_parser(url: str) -> Tuple[str, float, float]:
     return location_name, latitude, longtitude
 
 
-def get_place_info_for_summary(url: str) -> Dict[str, str]:
-    name, latitude, longtitude = googlemap_url_parser(url)
+def get_place_info_for_summary(name: str, latitude: float, longtitude: float) -> Dict[str, str]:
     gmaps_client: googlemaps.Client = googlemaps.Client(key=GOOGLEMAP_API_KEY)
-    place_result: Dict[str] = gmaps_client.places(
-        query=name, location=(latitude, longtitude)
-    )
+    place_result: Dict[str] = gmaps_client.places(query=name, location=(latitude, longtitude))
     place_id: str = place_result["results"][0]["place_id"]
 
     place_details_result = gmaps_client.place(place_id=place_id, language="ja")
@@ -52,6 +54,62 @@ def get_place_info_for_summary(url: str) -> Dict[str, str]:
     summary_info["reviews"] = place_details_result["result"].get("reviews", [])[:5]
 
     return summary_info
+
+
+def nearby_simirary_search(url: str, rad: int = 1500) -> List[Dict]:
+    name, latitude, longtitude = googlemap_url_parser(url)
+    info: Dict = get_place_info_for_summary(name, latitude, longtitude)
+    prompt = """
+            ### 指示
+            INPUTは、あるユーザーが訪れたいと思っている場所のGoogleMap上の情報です。
+            このINPUTを見て、同じような系統のお店を探すためのキーワードを教えてください。また、そのキーワードにより関連していると思われるINPUT内のtypesの項目を抜き出してください。
+            キーワードに関しては、可能であれば、シンプルな一単語でお願いします。
+            typesは最低限必要なものにしてください。
+
+            ### INPUT
+            <<INPUT>>
+            """
+    client = LLM(base="openai", model="gpt-4o-mini")
+    prompt = prompt.replace("<<INPUT>>", str(info))
+    client.set_prompt(prompt)
+    res, _, _ = client.get_response(response_format=searchKyeword)
+    # ここエラーハンドリング
+    res_json = json.loads(res)
+
+    gmaps = googlemaps.Client(key=GOOGLEMAP_API_KEY)
+    params = {
+        "location": (latitude, longtitude),
+        "radius": rad,  # 検索半径 (メートル単位),
+        "type": res_json["types"],
+        "keyword": res_json["keyword"],
+        "language": "ja",
+    }
+    nearby_places_result = gmaps.places_nearby(**params)
+
+    use_kyes = [
+        "place_id",
+        "name",
+        "rating",
+        "user_ratings_total",
+        # "url",
+    ]
+
+    search_formatted_result = []
+    for content in nearby_places_result["results"]:
+        use_info = {}
+        for key in use_kyes:
+            use_info[key] = content[key]
+
+        search_formatted_result.append(use_info)
+
+    return search_formatted_result
+
+
+def get_url_by_place_id(place_id: str) -> str:
+    gmaps_client: googlemaps.Client = googlemaps.Client(key=GOOGLEMAP_API_KEY)
+    search_result = gmaps_client.place(place_id=place_id, language="ja")
+
+    return search_result["result"]["url"]
 
 
 if __name__ == "__main__":
