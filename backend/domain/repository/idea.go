@@ -12,4 +12,6 @@ type Idea interface {
 	GetIdeas(ctx context.Context, eventId string) (*model.GetIdeasReponse, error)
 	Update(ctx context.Context, eventId, ideaId string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
+	Delete(ctx context.Context, eventId, ideaId string) error
+	Exist(ctx context.Context, eventId, ideaId string) (bool, error)
 }
