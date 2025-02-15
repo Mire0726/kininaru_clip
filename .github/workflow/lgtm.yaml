@@ -1,8 +1,9 @@
 name: "Pull Request Labeler"
 
 on:
+  on:
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   triage:
@@ -11,4 +12,4 @@ jobs:
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          sync-labels: true
+          sync-labels: false

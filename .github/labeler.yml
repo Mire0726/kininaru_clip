@@ -7,5 +7,3 @@ frontend:
 backend:
   - "backend/**/*"
 
-infra:
-  - "infra/**/*"
