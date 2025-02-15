@@ -26,8 +26,20 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteIdea } from "@/hooks/useDeleteIdea";
 import { useUpdateIdea } from "@/hooks/useUpdateIdea";
 
+interface FetchIdeaResponse {
+  id: string;
+  title: string;
+  url: string;
+  created_by: string;
+  created_by_name: string;
+  tag: string;
+  event_id: string;
+  likes: number;
+  summary: string;
+  memo: string;
+}
 interface IdeaCardProps {
-  idea: any;
+  idea: FetchIdeaResponse;
   eventId: string;
   ideaId: string;
 }
