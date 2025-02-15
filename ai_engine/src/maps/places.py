@@ -1,8 +1,9 @@
 import os
-from typing import Tuple, List, Dict
-from urllib.parse import urlparse, unquote
-from dotenv import load_dotenv
+from typing import Dict, List, Tuple
+from urllib.parse import unquote, urlparse
+
 import googlemaps
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -39,9 +40,7 @@ def googlemap_url_parser(url: str) -> Tuple[str, float, float]:
 def get_place_info_for_summary(url: str) -> Dict[str, str]:
     name, latitude, longtitude = googlemap_url_parser(url)
     gmaps_client: googlemaps.Client = googlemaps.Client(key=GOOGLEMAP_API_KEY)
-    place_result: Dict[str] = gmaps_client.places(
-        query=name, location=(latitude, longtitude)
-    )
+    place_result: Dict[str] = gmaps_client.places(query=name, location=(latitude, longtitude))
     place_id: str = place_result["results"][0]["place_id"]
 
     place_details_result = gmaps_client.place(place_id=place_id, language="ja")
