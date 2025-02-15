@@ -1,18 +1,23 @@
-name: LGTM
+name: LGTM Image Generator
+
 on:
   issue_comment:
     types: [created]
-  pull_request_review:
-    types: [submitted]
-  pull_request_review_comment:
-    types: [created]
 
 jobs:
-  lgtm:
+  generate-lgtm:
+    if: contains(github.event.comment.body, 'lgtm')
     runs-on: ubuntu-latest
+
     steps:
-      - name: LGTM
-        uses: Doarakko/action-lgtmoon/@v1.5
-        if: contains(github.event.comment.body, 'lgtm') || contains(github.event.review.body, 'lgtm')
+      - name: Generate LGTM Image
+        run: |
+          IMAGE_URL="https://lgtm.shinyaigeek.dev/api/lgtm?text=LGTM"
+          echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
+
+      - name: Post LGTM Image Comment
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          body: |
+            ![LGTM](${{ env.IMAGE_URL }})
+          token: ${{ secrets.GITHUB_TOKEN }}
