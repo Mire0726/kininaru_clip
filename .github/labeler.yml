@@ -1,0 +1,11 @@
+CI/CD:
+  - ".github/**/*"
+
+frontend:
+  - "frontend/**/*"
+
+backend:
+  - "backend/**/*"
+
+infra:
+  - "infra/**/*"
