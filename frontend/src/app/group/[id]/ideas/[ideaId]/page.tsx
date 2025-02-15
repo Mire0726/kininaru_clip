@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useEffect } from "react";
 import { use } from "react";
 import { useFetchUsers } from "@/hooks/useFetchUsers";
 import { useFetchEvent } from "@/hooks/useFetchEvent";
@@ -51,14 +52,22 @@ export default function IdeaList({ params }: Props) {
   const [editedTitle, setEditedTitle] = useState(idea?.title || "");
   const [editedMemo, setEditedMemo] = useState(idea?.memo || "");
   const [editedUrl, setEditedUrl] = useState(idea?.url || "");
+  useEffect(() => {
+    if (idea) {
+      setEditedTitle(idea.title || "");
+      setEditedMemo(idea.memo || "");
+      setEditedUrl(idea.url || "");
+    }
+  }, [idea]);
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditedTitle(idea?.title || "");
-    setEditedMemo(idea?.memo || "");
-    setEditedUrl(idea?.url || "");
+    if (idea) {
+      setEditedTitle(idea.title || "");
+      setEditedMemo(idea.memo || "");
+      setEditedUrl(idea.url || "");
+    }
   };
-
   const handleUpdate = () => {
     mutate(
       {

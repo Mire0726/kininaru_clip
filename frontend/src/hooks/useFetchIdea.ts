@@ -26,9 +26,12 @@ const fetchIdea = async (
 };
 
 export const useFetchIdea = (eventId: string, ideaId: string) => {
-  const { data, isLoading } = useQuery<FetchIdeaResponse>({
+  const { data, isLoading } = useQuery({
     queryKey: ["idea", eventId, ideaId],
     queryFn: () => fetchIdea(eventId, ideaId),
+    staleTime: 0,
+    gcTime: 1000 * 60,
+    refetchOnMount: true,
   });
 
   return {
