@@ -43,7 +43,6 @@ def get_place_info_for_summary(url: str) -> Dict[str, str]:
         query=name, location=(latitude, longtitude)
     )
     place_id: str = place_result["results"][0]["place_id"]
-    print(place_id)
 
     place_details_result = gmaps_client.place(place_id=place_id, language="ja")
     summary_info = {}
@@ -51,8 +50,6 @@ def get_place_info_for_summary(url: str) -> Dict[str, str]:
     summary_info["types"] = place_details_result["result"].get("types")
     summary_info["rating"] = place_details_result["result"].get("rating")
     summary_info["reviews"] = place_details_result["result"].get("reviews", [])[:5]
-
-    print(summary_info)
 
     return summary_info
 

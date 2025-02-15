@@ -53,8 +53,9 @@ class OpenAILLM(LLMBase):
         top_p=1.0,
         frequency_penalty=0,
         presence_penalty=0,
+        response_format=None,
     ) -> Tuple[str, int, int]:
-        response: ChatCompletion = self.client.chat.completions.create(
+        response: ChatCompletion = self.client.beta.chat.completions.parse(
             model=self.model,
             # ちょっとこれ雑
             messages=[self.prompt],
@@ -63,6 +64,7 @@ class OpenAILLM(LLMBase):
             top_p=top_p,
             frequency_penalty=frequency_penalty,
             presence_penalty=presence_penalty,
+            response_format=response_format,
         )
 
         content: str = response.choices[0].message.content

@@ -39,6 +39,7 @@ class LLM:
         top_p=1.0,
         frequency_penalty=0,
         presence_penalty=0,
+        response_format=None,
     ) -> Tuple[str, int, int]:
         # エラー処理
         if not self.prompt:
@@ -51,6 +52,7 @@ class LLM:
             top_p=top_p,
             frequency_penalty=frequency_penalty,
             presence_penalty=presence_penalty,
+            response_format=response_format,
         )
 
         # 正規表現の処理は、関数として渡せるようにしたい。
