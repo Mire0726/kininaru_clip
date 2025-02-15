@@ -1,0 +1,41 @@
+[project]
+name = "kininaruclip-aiengine"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.8",
+    "googlemaps>=4.10.0",
+    "openai>=1.63.0",
+    "python-dotenv>=1.0.1",
+    "uvicorn>=0.34.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "jupyter>=1.1.1",
+    "ruff>=0.9.6",
+]
+
+[tool.ruff]
+exclude = [
+    ".venv",
+    ".ruff_cache"
+]
+line-length = 119
+indent-width = 4
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "F", # Flake8
+    "B", # Black
+    "I", # isort
+    "E", # error
+    "W"  # warning
+]
+ignore = []
+fixable = ["ALL"]
+
