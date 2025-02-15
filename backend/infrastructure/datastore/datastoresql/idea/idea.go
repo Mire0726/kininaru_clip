@@ -168,3 +168,12 @@ func (r *idea) GetRecommendItems(ctx context.Context, ideaId string) (*model.Rec
 
 	return &model.RecommendResponse{Recommends: recommendItems}, nil
 }
+
+func (r *idea) BulkCreateRecommends(ctx context.Context, recommends []*model.Recommend) error {
+	result := r.db.WithContext(ctx).Create(&recommends)
+	if result.Error != nil {
+		r.logger.Logger.Error("failed to create recommends", log.Ferror(result.Error))
+		return result.Error
+	}
+	return nil
+}

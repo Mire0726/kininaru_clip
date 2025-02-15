@@ -15,4 +15,5 @@ type Idea interface {
 	Delete(ctx context.Context, eventId, ideaId string) error
 	Exist(ctx context.Context, eventId, ideaId string) (bool, error)
 	GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error)
+	BulkCreateRecommends(ctx context.Context, recommends []*model.Recommend) error
 }
