@@ -62,13 +62,14 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 	}
 
 	go func(url *string) {
-		// 30秒だと無理だった。なぜ????????
-		recommendCtx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		// ここが原因ではなく、大元のhttp.Clientのtimeout設定の問題だった。
+		recommendCtx, cancel := context.WithTimeout(context.Background(), 55*time.Second)
 		defer cancel()
 		recommendsResponse, err := u.pyClient.GetRecommends(recommendCtx, *url)
 		if err != nil {
 			u.log.Error("failed to get recommends")
 			fmt.Println(err)
+			return
 		}
 
 		var recommends []*model.Recommend

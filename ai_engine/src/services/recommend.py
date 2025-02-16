@@ -4,8 +4,8 @@ from src.services.summary import summarize_map_info_by_place_id
 from src.utils.ranking import calculate_rrf_rankings
 
 
-def recommend(url: str) -> recommednResponse:
-    search_formatted_result = nearby_simirary_search(url)
+def recommend(url: str, rad: int = 1500) -> recommednResponse:
+    search_formatted_result = nearby_simirary_search(url, rad)
     rrf_rank_list = calculate_rrf_rankings(search_formatted_result, top_n=2)
     recommend_items = []
 

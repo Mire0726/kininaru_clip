@@ -22,7 +22,10 @@ def construct_summary(request: SummaryRequest) -> SummaryResponse:
 
 @app.post("/recommends")
 def pred_recommend_items(request: recommendRequest) -> recommednResponse:
-    res = recommend(request.url)
+    res = recommend(request.url, rad=1500)
+    # レスポンスが空だった場合再度推論
+    if res.recommends == []:
+        res = recommend(request.url, rad=5000)
 
     return res
 
