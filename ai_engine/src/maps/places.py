@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple
 from urllib.parse import unquote, urlparse
 
 import googlemaps
+import requests
 from dotenv import load_dotenv
 
 from src.llm.llm import LLM
@@ -21,10 +22,10 @@ def googlemap_url_parser(url: str) -> Tuple[str, float, float]:
     Tuple[str, float, float] : location_name, latitude, longtiude
     """
     # short urlからlong urlへの変換。ただスクレイピングみたいな判定されて弾かれる。
-    # response = requests.get(url, allow_redirects=False)
-    # long_url = response.url
+    response = requests.get(url)
+    long_url = response.url
 
-    parsed_url = urlparse(url)
+    parsed_url = urlparse(long_url)
     encoded_place_names: List[str] = parsed_url.path.split("/")[3].split("+")
     location_info = parsed_url.path.split("/")[4].split(",")
     latitude: float = float(location_info[0][1:])
