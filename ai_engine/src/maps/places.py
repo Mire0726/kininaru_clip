@@ -22,10 +22,11 @@ def googlemap_url_parser(url: str) -> Tuple[str, float, float]:
     Tuple[str, float, float] : location_name, latitude, longtiude
     """
     # short urlからlong urlへの変換。ただスクレイピングみたいな判定されて弾かれる。
-    response = requests.get(url)
-    long_url = response.url
+    if len(url) < 100:
+        response = requests.get(url)
+        url = response.url
 
-    parsed_url = urlparse(long_url)
+    parsed_url = urlparse(url)
     encoded_place_names: List[str] = parsed_url.path.split("/")[3].split("+")
     location_info = parsed_url.path.split("/")[4].split(",")
     latitude: float = float(location_info[0][1:])
