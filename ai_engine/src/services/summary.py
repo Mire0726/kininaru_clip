@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from src.llm.llm import LLM
 from src.maps.places import get_place_info_for_summary, googlemap_url_parser
 from src.schema.summary import SummaryResponse
+from src.utils.display import display_star_by_rating
 
 load_dotenv()
 GOOGLEMAP_API_KEY = os.environ.get("GOOGLEMAP_API_KEY")
@@ -45,11 +46,9 @@ def summarize_map_info(url: str, debug: bool = False) -> str:
             - ジャンル：
             - 雰囲気：
             - おすすめ：
-            - 評価：
 
             この文章をsummaryをキーとするjsonで生成してください。
             OUTPUT FORMAT自体は、全体で文章にしてください。
-            また、評価は「白黒」の星を使って視覚的にもわかりやすいようにしてください。
             """
 
     client = LLM(base="openai", model="gpt-4o-mini")
@@ -62,6 +61,9 @@ def summarize_map_info(url: str, debug: bool = False) -> str:
     res, _, _ = client.get_response(response_format=SummaryResponse)
     res_json = json.loads(res)
 
+    rating = place_info["rating"]
+    res_json["summary"] = res_json["summary"] + f"{display_star_by_rating(rating)}"
+
     return res_json
 
 
@@ -71,7 +73,6 @@ def summarize_map_info_by_place_id(place_id: str) -> SummaryResponse:
     place_info = {}
     place_info["name"] = place_details_result["result"].get("name")
     place_info["types"] = place_details_result["result"].get("types")
-    place_info["rating"] = place_details_result["result"].get("rating")
     place_info["reviews"] = place_details_result["result"].get("reviews", [])[:5]
 
     prompt = """
@@ -90,11 +91,9 @@ def summarize_map_info_by_place_id(place_id: str) -> SummaryResponse:
             - ジャンル：
             - 雰囲気：
             - おすすめ：
-            - 評価：
 
             この文章をsummaryをキーとするjsonで生成してください。
             OUTPUT FORMAT自体は、全体で文章にしてください。
-            また、評価は「白黒」の星を使って視覚的にもわかりやすいようにしてください。
             """
 
     client = LLM(base="openai", model="gpt-4o-mini")
@@ -103,6 +102,9 @@ def summarize_map_info_by_place_id(place_id: str) -> SummaryResponse:
 
     res, _, _ = client.get_response(response_format=SummaryResponse)
     res_json = json.loads(res)
+
+    rating = place_details_result["result"].get("rating")
+    res_json["summary"] = res_json["summary"] + f"{display_star_by_rating(rating)}"
 
     return res_json
 
