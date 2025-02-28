@@ -1,5 +1,25 @@
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# pnpmのインストール
+RUN npm install -g pnpm
+
+# 依存関係ファイルのコピー
+COPY package.json pnpm-lock.yaml ./
+
+# 依存関係のインストール（開発依存を含む）
+RUN pnpm install --frozen-lockfile
+
+# ソースコードのコピー
+COPY . .
+
+# アプリケーションのビルド
+RUN pnpm run build
+
 # Production stage
-FROM node:18-alpine AS runner
+FROM node:18-alpine AS runner 
 
 WORKDIR /app
 
@@ -13,12 +33,8 @@ COPY --from=builder /app/public ./public
 RUN pnpm install --frozen-lockfile --prod
 
 # 環境変数の設定
-ARG ENV_FILE=.env.stg
 ENV NODE_ENV=production
 ENV PORT=3000
-
-# Render にアップロードしない .env をコピー
-COPY ${ENV_FILE} .env
 
 EXPOSE 3000
 
