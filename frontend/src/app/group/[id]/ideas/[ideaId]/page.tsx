@@ -106,6 +106,7 @@ export default function IdeaList({ params }: Props) {
         },
         requestBody: {
           title: editedTitle,
+          summary: idea?.summary,
           memo: editedMemo,
         },
       },
