@@ -22,7 +22,7 @@ func Serve(addr string) {
 
 	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
 		Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
-		AllowOrigins: []string{"https://kininaru-clip-front.onrender.com"},
+		AllowOrigins: []string{"https://kininaru-clip-front.onrender.com", "https://kininaru-clip.onrender.com"},
 		AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
 		AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
 	}))

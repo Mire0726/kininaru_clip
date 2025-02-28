@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { API_CONFIG } from '../constants/config'  
+import { API_CONFIG } from "../constants/config";
 
 interface UserRequest {
   name: string;
@@ -30,6 +30,7 @@ export const usePostEvent = () => {
     mutationFn: postEvent,
     onError: (error) => {
       console.error("APIエラー:", error);
+      console.log("frontend error",`${API_CONFIG.BASE_URL}/events`);
     },
   });
 };
