@@ -1,5 +1,5 @@
-# Go実行環境を使用
-FROM golang:1.21-alpine
+# ビルドステージ
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
@@ -10,9 +10,20 @@ RUN go mod download
 # ソースコードをコピー
 COPY . .
 
+# バイナリをビルド
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/main.go
+
+# 実行ステージ
+FROM alpine:latest
+
+WORKDIR /app
+
+# ビルドステージからバイナリをコピー
+COPY --from=builder /app/main .
+
 # ポート設定
 ENV PORT=8080
 EXPOSE 8080
 
-# go runで直接実行
-CMD ["go", "run", "./cmd/main.go"]
+# バイナリを実行
+CMD ["./main"]
