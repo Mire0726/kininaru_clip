@@ -34,10 +34,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 
 # 環境変数の設定
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 ENV PORT=3000
-
-EXPOSE 3000
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 # 開発サーバーの起動
 CMD ["pnpm", "run", "start"]
