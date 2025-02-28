@@ -30,7 +30,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
 # 本番環境用の依存関係のみインストール
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile 
 
 # 環境変数の設定
 ENV NODE_ENV=production
