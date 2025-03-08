@@ -5,8 +5,8 @@ from services.summary import SummaryServices
 
 
 class SummaryUsecase(ABC):
-    def __init__(self, summary_survices: SummaryServices):
-        self.summary_survices: SummaryServices = summary_survices
+    def __init__(self, summary_services: SummaryServices):
+        self.summary_services: SummaryServices = summary_services
 
     @abstractmethod
     def create(self, url: str) -> SummaryResponse:
@@ -15,5 +15,5 @@ class SummaryUsecase(ABC):
 
 class Summary(SummaryUsecase):
     def create(self, url: str) -> SummaryResponse:
-        summary: str = self.summary_survices.create(url=url)
+        summary: str = self.summary_services.create(url=url)
         return SummaryResponse(summary=summary)
