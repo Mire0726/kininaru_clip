@@ -11,7 +11,7 @@ GOOGLEMAP_API_KEY: str = os.environ.get("GOOGLEMAP_API_KEY")
 
 
 class GoogleMap(GoogleMapRepository):
-    def _parse_url(url: str) -> tuple[str, float, float]:
+    def _parse_url(self, url: str) -> tuple[str, float, float]:
         """
         url : GoogleMap URL
 
@@ -33,8 +33,8 @@ class GoogleMap(GoogleMapRepository):
 
         return location_name, latitude, longtitude
 
-    def get_place_info(self, url) -> dict:
-        name, latitude, longtitude = self._parse_url(url)
+    def get_place_info(self, url: str) -> dict:
+        name, latitude, longtitude = self._parse_url(url=url)
         gmaps_client: Client = Client(key=GOOGLEMAP_API_KEY)
         place_info: dict[str] = gmaps_client.places(query=name, location=(latitude, longtitude))
         place_id: str = place_info["results"][0]["place_id"]

@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+import requests
+from fastapi import Depends, FastAPI
 
+from api.deps import new_summary_usecase
+from domain.model.summary import SummaryRequest, SummaryResponse
 from src.schema.recommend import recommednResponse, recommendRequest
-from src.schema.summary import SummaryRequest, SummaryResponse
 from src.services.recommend import recommend
-from src.services.summary import summarize_map_info
+from usecase.summary import SummaryUsecase
 
 app = FastAPI()
 
@@ -14,8 +16,14 @@ async def root():
 
 
 @app.post("/summaries")
-def construct_summary(request: SummaryRequest) -> SummaryResponse:
-    res = summarize_map_info(request.url)
+def construct_summary(
+    request: SummaryRequest, summary_usecase: SummaryUsecase = Depends(new_summary_usecase)
+) -> SummaryResponse:
+    if len(request.url) < 100:
+        response = requests.get(request.url)
+        request.url = response.url
+
+    res: SummaryResponse = summary_usecase.create(url=request.url)
 
     return res
 

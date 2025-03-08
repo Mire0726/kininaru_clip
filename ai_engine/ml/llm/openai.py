@@ -21,7 +21,7 @@ class OpenAILLM(LLMRepository):
             }
         ]
 
-    def get_resoponse(self, prompt: str, respons_format: BaseModel) -> str:
+    def get_response(self, prompt: str, respons_format: BaseModel) -> str:
         message: list[dict] = self._build_prompt(prompt=prompt)
         response = self.client.beta.chat.completions.parse(
             model="gpt-4o-mini",
