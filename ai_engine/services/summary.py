@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from textwrap import dedent
 
+from domain.model.summary import SummaryResponse
 from domain.repository.google_map import GoogleMapRepository
 from domain.repository.llm import LLMRepository
-from domain.model.summary import SummaryResponse
+
 
 class SummaryServices(ABC):
     def __init__(self, llm: LLMRepository, google_map: GoogleMapRepository):
@@ -13,6 +14,7 @@ class SummaryServices(ABC):
     @abstractmethod
     def create(self, url: str) -> str:
         pass
+
 
 class Summarizer(SummaryServices):
     def _format_place_info(self, url: str) -> dict:
@@ -25,7 +27,7 @@ class Summarizer(SummaryServices):
         fomatted_place_info["reviews"] = place_info["result"].get("reviews", [])[:5]
 
         return fomatted_place_info
-    
+
     def _display_star_by_rating(self, rating: float) -> str:
         if not 0 <= rating <= 5:
             return "評価値は0～5の範囲で入力してください。"
@@ -34,11 +36,11 @@ class Summarizer(SummaryServices):
         filled_stars = "★" * rounded_value
         empty_stars = "☆" * (5 - rounded_value)
         return f"\n - 評価：{filled_stars + empty_stars} ({rating}/5)"
-    
+
     def create(self, url: str) -> str:
         place_info: dict = self._format_place_info(url=url)
 
-        # promptはテキストファイルからの読み込みに変更する。
+        # TODO: promptはテキストファイルからの読み込みに変更する。
         prompt: str = """
             ### 指示
             INPUTの内容を見て、SITUATIONに合わせた、OUTPUT FORMATのようなまとめを作ってください。
@@ -59,11 +61,10 @@ class Summarizer(SummaryServices):
             この文章をsummaryをキーとするjsonで生成してください。
             OUTPUT FORMAT自体は、全体で文章にしてください。
             """
-        
-        res: str = self.llm.get_resoponse(prompt=dedent(prompt), respons_format=SummaryResponse)
+
+        res: str = self.llm.get_response(prompt=dedent(prompt), respons_format=SummaryResponse)
 
         rating: float = float(place_info["rating"])
         summary: str = res + self._display_star_by_rating(rating=rating)
 
         return summary
-        
