@@ -11,7 +11,7 @@ class SummaryServices(ABC):
         self.google_map: GoogleMapRepository = google_map
 
     @abstractmethod
-    def exec(self, url: str) -> str:
+    def create(self, url: str) -> str:
         pass
 
 class Summarizer(SummaryServices):
@@ -35,7 +35,7 @@ class Summarizer(SummaryServices):
         empty_stars = "☆" * (5 - rounded_value)
         return f"\n - 評価：{filled_stars + empty_stars} ({rating}/5)"
     
-    def exec(self, url: str) -> str:
+    def create(self, url: str) -> str:
         place_info: dict = self._format_place_info(url=url)
 
         # promptはテキストファイルからの読み込みに変更する。
@@ -60,7 +60,7 @@ class Summarizer(SummaryServices):
             OUTPUT FORMAT自体は、全体で文章にしてください。
             """
         
-        res: str = self.llm.get_resoponse(prompt=prompt, respons_format=SummaryResponse)
+        res: str = self.llm.get_resoponse(prompt=dedent(prompt), respons_format=SummaryResponse)
 
         rating: float = float(place_info["rating"])
         summary: str = res + self._display_star_by_rating(rating=rating)
