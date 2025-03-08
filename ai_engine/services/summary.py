@@ -62,9 +62,9 @@ class Summarizer(SummaryServices):
             OUTPUT FORMAT自体は、全体で文章にしてください。
             """
 
-        res: str = self.llm.get_response(prompt=dedent(prompt), respons_format=SummaryResponse)
+        res: SummaryResponse = self.llm.get_response(prompt=dedent(prompt), respons_format=SummaryResponse)
 
         rating: float = float(place_info["rating"])
-        summary: str = res + self._display_star_by_rating(rating=rating)
+        summary: str = res["summary"] + self._display_star_by_rating(rating=rating)
 
         return summary

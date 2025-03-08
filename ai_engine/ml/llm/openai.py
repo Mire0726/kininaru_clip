@@ -1,3 +1,5 @@
+import json
+
 from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel
@@ -21,7 +23,7 @@ class OpenAILLM(LLMRepository):
             }
         ]
 
-    def get_response(self, prompt: str, respons_format: BaseModel) -> str:
+    def get_response(self, prompt: str, respons_format: BaseModel) -> BaseModel:
         message: list[dict] = self._build_prompt(prompt=prompt)
         response = self.client.beta.chat.completions.parse(
             model="gpt-4o-mini",
@@ -34,5 +36,6 @@ class OpenAILLM(LLMRepository):
             response_format=respons_format,
         )
         content: str = response.choices[0].message.content
+        json_content: BaseModel = json.loads(content)
 
-        return content
+        return json_content
