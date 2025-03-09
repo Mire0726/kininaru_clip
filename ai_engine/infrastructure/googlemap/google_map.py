@@ -33,12 +33,22 @@ class GoogleMap(GoogleMapRepository):
 
         return location_name, latitude, longtitude
 
-    def get_place_info(self, url: str) -> dict:
+    def get_basic_place_info(self, url: str) -> dict:
         name, latitude, longtitude = self._parse_url(url=url)
         gmaps_client: Client = Client(key=GOOGLEMAP_API_KEY)
         place_info: dict[str] = gmaps_client.places(query=name, location=(latitude, longtitude))
         place_id: str = place_info["results"][0]["place_id"]
 
-        place_detailed_info: dict = gmaps_client.place(place_id=place_id, language="ja")
+        basic_info: dict = {
+            "id": place_id,
+            "lattitude": latitude,
+            "longtitud": longtitude,
+        }
+
+        return basic_info
+
+    def get_detailed_place_info(self, id: str) -> dict:
+        gmaps_client: Client = Client(key=GOOGLEMAP_API_KEY)
+        place_detailed_info: dict = gmaps_client.place(place_id=id, language="ja")
 
         return place_detailed_info

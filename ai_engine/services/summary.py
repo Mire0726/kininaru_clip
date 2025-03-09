@@ -12,13 +12,13 @@ class SummaryServices(ABC):
         self.google_map: GoogleMapRepository = google_map
 
     @abstractmethod
-    def create(self, url: str) -> str:
+    def create(self, id: str) -> str:
         pass
 
 
 class Summarizer(SummaryServices):
-    def _format_place_info(self, url: str) -> dict:
-        place_info: dict = self.google_map.get_place_info(url=url)
+    def _format_place_info(self, id: str) -> dict:
+        place_info: dict = self.google_map.get_detailed_place_info(id=id)
 
         fomatted_place_info: dict = {}
         fomatted_place_info["name"] = place_info["result"].get("name")
@@ -37,8 +37,8 @@ class Summarizer(SummaryServices):
         empty_stars = "☆" * (5 - rounded_value)
         return f"\n - 評価：{filled_stars + empty_stars} ({rating}/5)"
 
-    def create(self, url: str) -> str:
-        place_info: dict = self._format_place_info(url=url)
+    def create(self, id: str) -> str:
+        place_info: dict = self._format_place_info(id=id)
 
         # TODO: promptはテキストファイルからの読み込みに変更する。
         prompt: str = """
