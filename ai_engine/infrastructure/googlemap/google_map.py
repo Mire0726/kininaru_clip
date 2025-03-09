@@ -11,6 +11,9 @@ GOOGLEMAP_API_KEY: str = os.environ.get("GOOGLEMAP_API_KEY")
 
 
 class GoogleMap(GoogleMapRepository):
+    def __init__(self):
+        self.gmaps_client: Client = Client(key=GOOGLEMAP_API_KEY)
+
     def _parse_url(self, url: str) -> tuple[str, float, float]:
         """
         url : GoogleMap URL
@@ -35,8 +38,7 @@ class GoogleMap(GoogleMapRepository):
 
     def get_basic_place_info(self, url: str) -> dict:
         name, latitude, longtitude = self._parse_url(url=url)
-        gmaps_client: Client = Client(key=GOOGLEMAP_API_KEY)
-        place_info: dict[str] = gmaps_client.places(query=name, location=(latitude, longtitude))
+        place_info: dict[str] = self.gmaps_client.places(query=name, location=(latitude, longtitude))
         place_id: str = place_info["results"][0]["place_id"]
 
         basic_info: dict = {
@@ -48,7 +50,20 @@ class GoogleMap(GoogleMapRepository):
         return basic_info
 
     def get_detailed_place_info(self, id: str) -> dict:
-        gmaps_client: Client = Client(key=GOOGLEMAP_API_KEY)
-        place_detailed_info: dict = gmaps_client.place(place_id=id, language="ja")
+        place_detailed_info: dict = self.gmaps_client.place(place_id=id, language="ja")
 
         return place_detailed_info
+
+    def search_nearby_places(
+        self, location: tuple[float, float], radius: int, types: list[str], keyword: str, lang: str
+    ) -> list[dict]:
+        search_params = {
+            "location": location,
+            "radius": radius,  # 検索半径 (メートル単位),
+            "type": types,
+            "keyword": keyword,
+            "language": lang,
+        }
+        nearby_place_infos: list[dict] = self.gmaps.places_nearby(**search_params)
+
+        return nearby_place_infos

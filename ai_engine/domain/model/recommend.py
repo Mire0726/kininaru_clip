@@ -1,15 +1,15 @@
 from pydantic import BaseModel
 
 
-class recommendRequest(BaseModel):
+class RecommendRequest(BaseModel):
     url: str
 
 
-class recommendItem(BaseModel):
+class RecommendItem(BaseModel):
     name: str
     url: str
     content: str
 
 
-class recommednResponse(BaseModel):
-    recommends: list[recommendItem]
+class RecommednResponse(BaseModel):
+    recommends: list[RecommendItem]
