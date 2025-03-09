@@ -44,7 +44,7 @@ class GoogleMap(GoogleMapRepository):
         basic_info: dict = {
             "id": place_id,
             "lattitude": latitude,
-            "longtitud": longtitude,
+            "longtitude": longtitude,
         }
 
         return basic_info
@@ -64,6 +64,6 @@ class GoogleMap(GoogleMapRepository):
             "keyword": keyword,
             "language": lang,
         }
-        nearby_place_infos: list[dict] = self.gmaps.places_nearby(**search_params)
+        nearby_place_infos: list[dict] = self.gmaps_client.places_nearby(**search_params)
 
         return nearby_place_infos

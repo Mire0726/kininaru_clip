@@ -1,10 +1,10 @@
 import requests
 from fastapi import FastAPI
 
-from api.deps.usecase import summary_usecase_dependency
+from api.deps.usecase import recommend_usecase_dependency, summary_usecase_dependency
+from domain.model.recommend import RecommednResponse, RecommendItem, RecommendRequest
 from domain.model.summary import SummaryRequest, SummaryResponse
-from src.schema.recommend import recommednResponse, recommendRequest
-from src.services.recommend import recommend
+from usecase.recommend import RecommendUsecase
 from usecase.summary import SummaryUsecase
 
 app = FastAPI()
@@ -29,14 +29,14 @@ def construct_summary(
 
 
 @app.post("/recommends")
-def pred_recommend_items(request: recommendRequest) -> recommednResponse:
-    res = recommend(request.url, rad=1500)
+def pred_recommend_items(
+    request: RecommendRequest, recommend_usecase: RecommendUsecase = recommend_usecase_dependency
+) -> RecommednResponse:
+    rec_items: list[RecommendItem] = recommend_usecase.inference(url=request.url, radius=1500)
     # レスポンスが空だった場合再度推論
-    if res.recommends == []:
-        res = recommend(request.url, rad=5000)
+    if rec_items == []:
+        rec_items = recommend_usecase.inference(url=request.url, radius=5000)
 
-    return res
+    response: RecommednResponse = RecommednResponse(recommends=rec_items)
 
-
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug")
+    return response
