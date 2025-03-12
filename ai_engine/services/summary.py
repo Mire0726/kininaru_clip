@@ -62,6 +62,7 @@ class Summarizer(SummaryServices):
             OUTPUT FORMAT自体は、全体で文章にしてください。
             """
 
+        prompt = prompt.replace("<<INPUT>>", str(place_info))
         res: SummaryResponse = self.llm.get_response(prompt=dedent(prompt), respons_format=SummaryResponse)
 
         rating: float = float(place_info["rating"])
