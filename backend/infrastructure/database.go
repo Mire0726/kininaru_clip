@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -17,13 +17,14 @@ func NewDB() (*gorm.DB, error) {
 	dbName := os.Getenv("DB_NAME")
 
 	if dbUser == "" || dbPassword == "" || dbHost == "" || dbPort == "" || dbName == "" {
+		fmt.Println("database configuration is incomplete; please set DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME")
 		return nil, fmt.Errorf("database configuration is incomplete; please set DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME")
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser, dbPassword, dbHost, dbPort, dbName)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo",
+		dbHost, dbUser, dbPassword, dbName, dbPort)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
