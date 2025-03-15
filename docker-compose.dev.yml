@@ -71,22 +71,27 @@ services:
     networks:
       - app-network
 
-  # phpmyadmin:
-  #   image: phpmyadmin
-  #   ports:
-  #     - "3001:80"
-  #   environment:
-  #     - PMA_HOST=mysql
-  #     - PMA_USER=root
-  #     - PMA_PASSWORD=mysql
-  #   networks:
-  #     - app-network
-  #   depends_on:
-  #     - mysql
+  pgadmin4:
+    image: dpage/pgadmin4:8.4
+    ports:
+      - 80:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+      - ./postgres/config/servers.json:/pgadmin4/servers.json
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    networks:
+      - app-network
+    depends_on:
+      - postgresql
 
 volumes:
   db-data:
   node_modules:
+  pgadmin-data:
 
 networks:
   app-network:
