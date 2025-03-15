@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { API_CONFIG } from "../constants/config";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface UserRequest {
   name: string;
@@ -19,7 +19,7 @@ interface EventResponse {
 
 const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
   const response = await axios.post<EventResponse>(
-    `${API_CONFIG.BASE_URL}/events`,
+    `${apiUrl}/events`,
     eventData
   );
   return response.data;
@@ -30,8 +30,7 @@ export const usePostEvent = () => {
     mutationFn: postEvent,
     onError: (error) => {
       console.error("APIエラー:", error);
-      console.log("frontend error",`${API_CONFIG.BASE_URL}/events`);
-      
+      console.log("frontend error", `${apiUrl}/events`);
     },
   });
 };
