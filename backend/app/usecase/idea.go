@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/infrastructure/datastore"
@@ -86,7 +88,6 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 		}
 
 		return
-
 	}(input.Url)
 
 	return idea, nil
