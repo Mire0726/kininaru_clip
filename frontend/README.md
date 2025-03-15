@@ -34,3 +34,29 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# フロントエンド技術スタック
+- next.js
+- TypeScript
+- chakraUI
+
+## app routerについて
+next.jsにはapp routerとpage routerがある（多分）
+app routerの方がモダン（多分）
+二つの違いはルーティングの方法（大体）
+フォルダ名がルーティングのURLになる
+ex)
+`root/page.tsx`はホームのディレクトリ
+
+[]がパスパラメーターになっている
+
+## カスタムフックについて
+*バックエンドとの繋ぎ込みにカスタムフックを使っています*
+`src>hooks` の中にカスタムフックをまとめて置いている
+css要素がある場合は.tsxを使い、ない場合は.tsを使う
+
+## componentについて
+使い回しのできるUIはapp/componentsにしてます
+
+## constantsについて
+使い回しのできる変数はapp/constants/type.tsxに入れています

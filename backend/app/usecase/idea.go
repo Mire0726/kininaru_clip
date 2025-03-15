@@ -58,6 +58,37 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 		return nil, err
 	}
 
+	go func(url *string) {
+		// ここが原因ではなく、大元のhttp.Clientのtimeout設定の問題だった。
+		recommendCtx, cancel := context.WithTimeout(context.Background(), 55*time.Second)
+		defer cancel()
+		recommendsResponse, err := u.pyClient.GetRecommends(recommendCtx, *url)
+		if err != nil {
+			u.log.Error("failed to get recommends")
+			fmt.Println(err)
+			return
+		}
+
+		var recommends []*model.Recommend
+		for _, item := range recommendsResponse {
+			recommend := &model.Recommend{
+				ID:      uid.NewGenerator().NewULID(),
+				Name:    item.Name,
+				Url:     item.URL,
+				IdeaID:  idea.ID,
+				Content: item.Content,
+			}
+			recommends = append(recommends, recommend)
+		}
+
+		if err := u.data.ReadWriteStore().Idea().BulkCreateRecommends(recommendCtx, recommends); err != nil {
+			u.log.Error("failed to create recommends")
+		}
+
+		return
+
+	}(input.Url)
+
 	return idea, nil
 }
 

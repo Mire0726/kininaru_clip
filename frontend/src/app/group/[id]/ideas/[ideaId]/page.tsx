@@ -12,6 +12,8 @@ import Header from "@/components/header";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
+import { FaChevronDown, FaChevronUp} from "react-icons/fa";
+
 import {
   Button,
   Flex,

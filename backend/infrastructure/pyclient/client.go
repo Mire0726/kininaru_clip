@@ -26,7 +26,11 @@ func NewClient(baseURL string) Client {
 	return &client{
 		baseURL: baseURL,
 		httpClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout: 60 * time.Second,
+			// この変更で、長い時間のレスポンスにも対応
+			Transport: &http.Transport{
+				ResponseHeaderTimeout: 60 * time.Second, // レスポンスヘッダー受信タイムアウトを 90秒 に設定 (例)
+			},
 		},
 	}
 }
