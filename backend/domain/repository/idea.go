@@ -14,4 +14,5 @@ type Idea interface {
 	UpdateIdeaLikes(ctx context.Context, eventId string, ideaId string) (*model.Idea, error)
 	Delete(ctx context.Context, eventId, ideaId string) error
 	Exist(ctx context.Context, eventId, ideaId string) (bool, error)
+	BulkCreateRecommends(ctx context.Context, recommends []*model.Recommend) error
 }

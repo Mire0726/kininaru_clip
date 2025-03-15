@@ -157,3 +157,23 @@ func (r *idea) Exist(ctx context.Context, eventId, ideaId string) (bool, error) 
 
 	return count > 0, nil
 }
+
+func (r *idea) GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error) {
+	var recommendItems []*model.Recommend
+	result := r.db.WithContext(ctx).Where("idea_id = ?", ideaId).Find(&recommendItems)
+	if result.Error != nil {
+		r.logger.Logger.Error("failed to get recommend items", log.Ferror(result.Error))
+		return nil, result.Error
+	}
+
+	return &model.RecommendResponse{Recommends: recommendItems}, nil
+}
+
+func (r *idea) BulkCreateRecommends(ctx context.Context, recommends []*model.Recommend) error {
+	result := r.db.WithContext(ctx).Create(&recommends)
+	if result.Error != nil {
+		r.logger.Logger.Error("failed to create recommends", log.Ferror(result.Error))
+		return result.Error
+	}
+	return nil
+}
