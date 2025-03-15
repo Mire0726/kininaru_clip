@@ -30,7 +30,11 @@ export const usePostEvent = () => {
     mutationFn: postEvent,
     onError: (error) => {
       console.error("APIエラー:", error);
-      console.log("frontend error",`${API_CONFIG.BASE_URL}/events`);
+      console.log("frontend error", `${API_CONFIG.BASE_URL}/events`);
+
+      if (!API_CONFIG.BASE_URL) {
+        console.error("API_BASE_URL が設定されていません");
+      }
     },
   });
 };
