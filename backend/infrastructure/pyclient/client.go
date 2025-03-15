@@ -14,6 +14,7 @@ import (
 type Client interface {
 	// GetSummary は指定の URL に対して要約をリクエストし、結果の summary を返します。
 	GetSummary(ctx context.Context, url string) (string, error)
+	GetRecommends(ctx context.Context, url string) ([]*RecommendItem, error)
 }
 
 type client struct {
@@ -69,4 +70,37 @@ func (c *client) GetSummary(ctx context.Context, url string) (string, error) {
 	}
 
 	return respData.Summary, nil
+}
+
+func (c *client) GetRecommends(ctx context.Context, url string) ([]*RecommendItem, error) {
+	reqData := RecommendRequest{URL: url}
+	reqBody, err := json.Marshal(reqData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request data: %w", err)
+	}
+
+	endpoint := fmt.Sprintf("%s/recommends", c.baseURL)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return nil, fmt.Errorf("failed to perform request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to perform request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(body))
+	}
+
+	var respData RecommendResponse
+	if err := json.NewDecoder(resp.Body).Decode(&respData); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return respData.Recommends, nil
 }
