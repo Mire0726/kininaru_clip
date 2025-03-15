@@ -19,7 +19,7 @@ interface EventResponse {
 
 const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
   const response = await axios.post<EventResponse>(
-    `${API_CONFIG.BASE_URL}/events`,
+    `/events`,
     eventData
   );
   return response.data;
