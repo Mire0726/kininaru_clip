@@ -19,7 +19,7 @@ interface EventResponse {
 
 const postEvent = async (eventData: EventRequest): Promise<EventResponse> => {
   const response = await axios.post<EventResponse>(
-    `/events`,
+    `${API_CONFIG.BASE_URL}/events`,
     eventData
   );
   return response.data;
@@ -30,11 +30,8 @@ export const usePostEvent = () => {
     mutationFn: postEvent,
     onError: (error) => {
       console.error("APIエラー:", error);
-      console.log("frontend error", `${API_CONFIG.BASE_URL}/events`);
-
-      if (!API_CONFIG.BASE_URL) {
-        console.error("API_BASE_URL が設定されていません");
-      }
+      console.log("frontend error",`${API_CONFIG.BASE_URL}/events`);
+      
     },
   });
 };
