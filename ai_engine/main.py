@@ -32,6 +32,10 @@ def construct_summary(
 def pred_recommend_items(
     request: RecommendRequest, recommend_usecase: RecommendUsecase = recommend_usecase_dependency
 ) -> RecommednResponse:
+    if len(request.url) < 100:
+        response = requests.get(request.url)
+        request.url = response.url
+
     rec_items: list[RecommendItem] = recommend_usecase.inference(url=request.url, radius=1500)
     # レスポンスが空だった場合再度推論
     if rec_items == []:
