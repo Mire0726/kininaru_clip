@@ -21,6 +21,7 @@ type IdeaUsecase interface {
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
 	Delete(ctx context.Context, eventId, ideaId string) error
+	GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error)
 }
 
 type ideaUC struct {
@@ -167,4 +168,14 @@ func (u *ideaUC) Delete(ctx context.Context, eventId, ideaId string) error {
 		return errors.New("failed to delete idea")
 	}
 	return nil
+}
+
+func (u *ideaUC) GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error) {
+	res, err := u.data.ReadWriteStore().Idea().GetRecommendItems(ctx, ideaId)
+	if err != nil {
+		u.log.Error("failed to get recommend items")
+		return nil, err
+	}
+
+	return res, nil
 }
