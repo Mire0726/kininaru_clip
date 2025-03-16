@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFetchRecommend } from "@/hooks/useFetchRecommend";
 import { useToast } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
-import { FaChevronDown, FaChevronUp} from "react-icons/fa";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 import {
   Button,
