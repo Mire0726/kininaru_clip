@@ -54,6 +54,7 @@ func Serve(addr string) {
 	e.PUT("/events/:eventId/ideas/:ideaId", handlerCmd.UpdateIdea)
 	e.DELETE("/events/:eventId/ideas/:ideaId", handlerCmd.DeleteIdea)
 	e.GET("/events/:eventId", handlerCmd.GetEvent)
+	e.GET("/events/:eventId/ideas/:ideaId/recommends", handlerCmd.GetRecommendItems)
 
 	/* ===== サーバの起動 ===== */
 	logger.Info("Server running", log.Fstring("address", addr))
