@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"os"
 
 	"kininaru_clip/backend/app/handler"
 	"kininaru_clip/backend/infrastructure"
@@ -32,7 +33,7 @@ func Serve(addr string) {
 		logger.Error("Failed to connect db", log.Ferror(err))
 	}
 
-	const pythonServerBaseURL = "http://ai-engine:8000"
+	pythonServerBaseURL := os.Getenv("PYTHON_SERVER_BASE_URL")
 
 	data := datastoresql.NewStore(db, logger)
 	handlerCmd := handler.NewHandler(data, logger, pythonServerBaseURL)

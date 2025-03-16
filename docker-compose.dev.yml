@@ -14,6 +14,7 @@ services:
       - DB_PASSWORD=postgres
       - DB_NAME=db
       - DB_PORT=5432
+      - PYTHON_SERVER_BASE_URL=http://ai-engine:8000
     networks:
       - app-network
     depends_on:
