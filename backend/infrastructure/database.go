@@ -3,15 +3,16 @@ package infrastructure
 import (
 	"fmt"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 func NewDB() (*gorm.DB, error) {
-	dsn := "root:mysql@tcp(mysql:3306)/db?charset=utf8mb4&parseTime=true&loc=Local"
+	// PostgreSQL接続文字列
+	dsn := "host=postgresql user=postgres password=postgres dbname=db port=5432 sslmode=disable TimeZone=Asia/Tokyo"
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {

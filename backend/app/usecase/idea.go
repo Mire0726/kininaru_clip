@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"kininaru_clip/backend/domain/model"
 	"kininaru_clip/backend/infrastructure/datastore"
@@ -19,6 +21,7 @@ type IdeaUsecase interface {
 	Update(ctx context.Context, eventID, ideaID string, input model.UpdateIdeaInput) (*model.Idea, error)
 	UpdateIdeaLikes(ctx context.Context, eventId, ideaId string) (*model.Idea, error)
 	Delete(ctx context.Context, eventId, ideaId string) error
+	GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error)
 }
 
 type ideaUC struct {
@@ -36,20 +39,20 @@ func NewIdeaUsecase(data datastore.Data, log *log.Logger, baseURL string) IdeaUs
 }
 
 func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateIdeaInput) (*model.Idea, error) {
-	summary, err := u.pyClient.GetSummary(ctx, input.Url)
-	if err != nil {
-		u.log.Error("failed to get summary from python server")
-		return nil, err
-	}
-
 	idea := &model.Idea{
 		ID:        uid.NewGenerator().NewULID(),
 		Title:     input.Title,
-		Url:       input.Url,
+		Url:       *input.Url,
 		CreatedBy: input.CreatedBy,
 		Tag:       input.Tag,
 		EventID:   eventID,
-		Summary:   &summary,
+	}
+
+	summary, err := u.pyClient.GetSummary(ctx, *input.Url)
+	if err == nil {
+		idea.Summary = &summary
+	} else {
+		u.log.Error("failed to get summary from python server")
 	}
 
 	if err = u.data.ReadWriteStore().Idea().Create(ctx, idea); err != nil {
@@ -57,6 +60,37 @@ func (u *ideaUC) Create(ctx context.Context, eventID string, input model.CreateI
 
 		return nil, err
 	}
+
+	go func(url *string) {
+		// ここが原因ではなく、大元のhttp.Clientのtimeout設定の問題だった。
+		recommendCtx, cancel := context.WithTimeout(context.Background(), 55*time.Second)
+		defer cancel()
+		recommendsResponse, err := u.pyClient.GetRecommends(recommendCtx, *url)
+		if err != nil {
+			u.log.Error("failed to get recommends")
+			fmt.Println(err)
+			return
+		}
+
+		var recommends []*model.Recommend
+		for _, item := range recommendsResponse {
+			recommend := &model.Recommend{
+				ID:      uid.NewGenerator().NewULID(),
+				Name:    item.Name,
+				Url:     item.URL,
+				IdeaID:  idea.ID,
+				Content: item.Content,
+			}
+			recommends = append(recommends, recommend)
+		}
+
+		if err := u.data.ReadWriteStore().Idea().BulkCreateRecommends(recommendCtx, recommends); err != nil {
+			u.log.Error("failed to create recommends")
+		}
+
+		return
+
+	}(input.Url)
 
 	return idea, nil
 }
@@ -135,4 +169,14 @@ func (u *ideaUC) Delete(ctx context.Context, eventId, ideaId string) error {
 		return errors.New("failed to delete idea")
 	}
 	return nil
+}
+
+func (u *ideaUC) GetRecommendItems(ctx context.Context, ideaId string) (*model.RecommendResponse, error) {
+	res, err := u.data.ReadWriteStore().Idea().GetRecommendItems(ctx, ideaId)
+	if err != nil {
+		u.log.Error("failed to get recommend items")
+		return nil, err
+	}
+
+	return res, nil
 }

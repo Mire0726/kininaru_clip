@@ -35,11 +35,11 @@ const (
 )
 
 type CreateIdeaInput struct {
-	Title     string `json:"title"`
-	Url       string `json:"url"`
-	CreatedBy string `json:"created_by"`
-	Tag       string `json:"tag"`
-	EventID   string `json:"event_id"`
+	Title     string  `json:"title"`
+	Url       *string `json:"url"`
+	CreatedBy string  `json:"created_by"`
+	Tag       string  `json:"tag"`
+	EventID   string  `json:"event_id"`
 }
 
 type GetIdeasReponse struct {

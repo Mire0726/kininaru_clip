@@ -1,8 +1,11 @@
-import uvicorn
+import requests
 from fastapi import FastAPI
 
-from src.schema.summary import SummaryRequest, SummaryResponse
-from src.services.summary import summarize_map_info
+from api.deps.usecase import recommend_usecase_dependency, summary_usecase_dependency
+from domain.model.recommend import RecommednResponse, RecommendItem, RecommendRequest
+from domain.model.summary import SummaryRequest, SummaryResponse
+from usecase.recommend import RecommendUsecase
+from usecase.summary import SummaryUsecase
 
 app = FastAPI()
 
@@ -13,11 +16,31 @@ async def root():
 
 
 @app.post("/summaries")
-def construct_summary(request: SummaryRequest) -> SummaryResponse:
-    res = summarize_map_info(request.url)
+def construct_summary(
+    request: SummaryRequest, summary_usecase: SummaryUsecase = summary_usecase_dependency
+) -> SummaryResponse:
+    if len(request.url) < 100:
+        response = requests.get(request.url)
+        request.url = response.url
 
-    return res
+    response: SummaryResponse = summary_usecase.create(url=request.url)
+
+    return response
 
 
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug")
+@app.post("/recommends")
+def pred_recommend_items(
+    request: RecommendRequest, recommend_usecase: RecommendUsecase = recommend_usecase_dependency
+) -> RecommednResponse:
+    if len(request.url) < 100:
+        response = requests.get(request.url)
+        request.url = response.url
+
+    rec_items: list[RecommendItem] = recommend_usecase.inference(url=request.url, radius=1500)
+    # レスポンスが空だった場合再度推論
+    if rec_items == []:
+        rec_items = recommend_usecase.inference(url=request.url, radius=5000)
+
+    response: RecommednResponse = RecommednResponse(recommends=rec_items)
+
+    return response
