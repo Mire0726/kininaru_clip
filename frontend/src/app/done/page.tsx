@@ -16,15 +16,23 @@ import {
 } from "@chakra-ui/react";
 import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import Header from "../../components/header";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function GroupCreated() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const groupId = searchParams.get("id");
+  const groupUrl = groupId ? `${window.location.origin}/${groupId}` : "";
+
   const fontSize = useBreakpointValue({ base: "2xl", md: "3xl" });
   const inputSize = useBreakpointValue({ base: "md", md: "lg" });
   const buttonSize = useBreakpointValue({ base: "md", md: "lg" });
-
-  const groupUrl = "https://example.com/group/123";
   const { hasCopied, onCopy } = useClipboard(groupUrl);
-
+  const handleGroupPageNavigation = () => {
+    if (groupId) {
+      router.push(`/group/${groupId}`);
+    }
+  };
   return (
     <Flex direction="column" minH="100vh" bg="#FFF8F8">
       <Header />
@@ -47,8 +55,7 @@ export default function GroupCreated() {
         </Box>
 
         <Text fontSize="md" mb={4} textAlign="center">
-          まずはグループページのURLをコピーして、  
-          LINEなどでメンバーに共有しましょう。
+          グループページのURLをコピーして、 LINEなどでメンバーに共有しましょう。
         </Text>
 
         <Stack spacing={4} w="full" maxW="500px">
@@ -64,7 +71,7 @@ export default function GroupCreated() {
               <InputRightElement>
                 <IconButton
                   aria-label="Copy URL"
-                  icon={<CopyIcon />}
+                  icon={hasCopied ? <CheckIcon /> : <CopyIcon />}
                   onClick={onCopy}
                   variant="ghost"
                 />
@@ -80,7 +87,7 @@ export default function GroupCreated() {
             borderRadius="md"
             boxShadow="md"
             _hover={{ bg: "#3A9CEB" }}
-            onClick={() => window.location.href = groupUrl}
+            onClick={handleGroupPageNavigation}
           >
             グループページへ進む
           </Button>
