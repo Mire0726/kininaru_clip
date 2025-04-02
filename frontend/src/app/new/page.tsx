@@ -36,7 +36,6 @@ export default function NewGroup() {
     setMemberName("");
   };
 
-  // メンバー削除処理
   const handleRemoveMember = (name: string) => {
     setMembers(members.filter((member) => member !== name));
   };
@@ -54,10 +53,10 @@ export default function NewGroup() {
       },
       {
         onSuccess: (data) => {
-          router.push(data.url);
+          router.push(`/done?id=${encodeURIComponent(data.id)}`);
         },
         onError: () => {
-          console.log(members.map((name) => ({ name })))
+          console.log(members.map((name) => ({ name })));
           toast({
             title: "エラー",
             description: "グループの作成に失敗しました",
