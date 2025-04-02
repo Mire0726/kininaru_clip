@@ -23,13 +23,13 @@ function DoneContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const groupId = searchParams.get("id");
-  const groupUrl = groupId ? `${window.location.origin}/${groupId}` : "";
+  const groupUrl = groupId ? `${window.location.origin}/group/${groupId}` : "";
 
   const fontSize = useBreakpointValue({ base: "2xl", md: "3xl" });
   const inputSize = useBreakpointValue({ base: "md", md: "lg" });
   const buttonSize = useBreakpointValue({ base: "md", md: "lg" });
   const { hasCopied, onCopy } = useClipboard(groupUrl);
-  
+
   const handleGroupPageNavigation = () => {
     if (groupId) {
       router.push(`/group/${groupId}`);
