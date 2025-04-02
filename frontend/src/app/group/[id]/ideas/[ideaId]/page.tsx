@@ -13,8 +13,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFetchRecommend } from "@/hooks/useFetchRecommend";
 import { useToast } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
-import { FaChevronDown, FaChevronUp} from "react-icons/fa";
-
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -256,17 +256,19 @@ export default function IdeaList({ params }: Props) {
         <Divider my={4} />
 
         <Flex direction="column" gap={2} mt={4}>
-          <Text fontSize="md" fontWeight="bold">
-            Google Maps URL：
-          </Text>
           <Link
             href={idea?.url}
             color="blue.500"
             isExternal
-            wordBreak="break-all"
-            overflowWrap="break-word"
+            display="flex"
+            alignItems="center"
+            gap={2}
+            _hover={{ textDecoration: "none", opacity: 0.8 }}
           >
-            {idea?.url}
+            <Text fontSize="md" fontWeight="bold" color="black">
+              Google Maps URL：
+            </Text>
+            <Icon as={ExternalLinkIcon} color="gray.600" boxSize={4} />
           </Link>
         </Flex>
 
