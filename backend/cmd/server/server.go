@@ -20,10 +20,10 @@ func Serve(addr string) {
 
 	e.Use(echomiddleware.Recover())
 	e.Use(echomiddleware.Logger())
-
+	allowOriginUrls := os.Getenv("ALLOW_ORIGIN_URLS")
 	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
 		Skipper:      echomiddleware.DefaultCORSConfig.Skipper,
-		AllowOrigins: []string{"https://kininaru-clip-front.onrender.com", "https://kininaru-clip.onrender.com"},
+		AllowOrigins: []string{allowOriginUrls},
 		AllowMethods: echomiddleware.DefaultCORSConfig.AllowMethods,
 		AllowHeaders: []string{"Content-Type", "Accept", "Origin", "X-Token", "Authorization"},
 	}))
