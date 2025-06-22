@@ -26,7 +26,7 @@ class OpenAILLM(LLMRepository):
     def get_response(self, prompt: str, respons_format: BaseModel) -> BaseModel:
         message: list[dict] = self._build_prompt(prompt=prompt)
         response = self.client.beta.chat.completions.parse(
-            model="gpt-4o-mini",
+            model="gpt-4.1-nano",
             messages=message,
             temperature=1,
             max_tokens=4096,
