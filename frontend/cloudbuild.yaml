@@ -1,19 +1,16 @@
 steps:
-  # .envにCloud Buildの代入変数を埋め込むステップを追加する
   - name: "gcr.io/cloud-builders/docker"
     entrypoint: "bash"
     args:
       - "-c"
       - |
-        echo "NEXT_PUBLIC_API_URL=${_NEXT_PUBLIC_API_URL}" >> .env
+        echo "NEXT_PUBLIC_API_URL=${_NEXT_PUBLIC_API_URL}" >> .env.production
 
         docker build -f Dockerfile -t gcr.io/$PROJECT_ID/kininaru-clip-front:$COMMIT_SHA .
 
-  # ビルドしたコンテナイメージをArtifact Registryにプッシュ
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/kininaru-clip-front:$COMMIT_SHA"]
 
-  # Artifact RegistryのコンテナイメージをCloud Runにデプロイ
   - name: "gcr.io/cloud-builders/gcloud"
     args:
       - "run"
