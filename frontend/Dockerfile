@@ -40,7 +40,7 @@ COPY --from=builder /app/node_modules ./node_modules
 # 実行時の環境変数
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV NEXT_PUBLIC_API_BASE_URL=https://kininaru-clip-627290714458.asia-northeast1.run.app
+ENV NEXT_PUBLIC_API_BASE_URL=https://kininaru-clip-rlmv3j3riq-an.a.run.app
 
 # 本番サーバーの起動
 CMD ["pnpm", "run", "start"]
