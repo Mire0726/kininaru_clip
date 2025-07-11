@@ -4,9 +4,10 @@ steps:
     args:
       - "-c"
       - |
-        echo "NEXT_PUBLIC_API_URL=${_NEXT_PUBLIC_API_URL}" >> .env.production
-
-        docker build -f Dockerfile -t gcr.io/$PROJECT_ID/kininaru-clip-front:$COMMIT_SHA .
+        docker build \
+          --build-arg NEXT_PUBLIC_API_URL=${_NEXT_PUBLIC_API_URL} \
+          -f Dockerfile \
+          -t gcr.io/$PROJECT_ID/kininaru-clip-front:$COMMIT_SHA .
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/kininaru-clip-front:$COMMIT_SHA"]
